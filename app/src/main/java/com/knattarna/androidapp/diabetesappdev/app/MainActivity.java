@@ -70,6 +70,16 @@ public class MainActivity extends ActionBarActivity {
                 add("Lunch");
                 add("Snack");
                 add("Dinner");
+                add("Breakfast");
+                add("Brunch");
+                add("Lunch");
+                add("Snack");
+                add("Dinner");
+                add("Breakfast");
+                add("Brunch");
+                add("Lunch");
+                add("Snack");
+                add("Dinner");
             }};
             ArrayAdapter<String> adapter = new ArrayAdapter<String>(
                     getActivity(),
