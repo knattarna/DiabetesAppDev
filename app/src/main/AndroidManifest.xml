@@ -16,6 +16,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name="com.knattarna.androidapp.diabetesappdev.app.ActivityWindow"
+            android:label="@string/title_activity_activity_window"
+            android:parentActivityName="com.knattarna.androidapp.diabetesappdev.app.MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.knattarna.androidapp.diabetesappdev.app.MainActivity" />
+        </activity>
     </application>
 
 </manifest>
