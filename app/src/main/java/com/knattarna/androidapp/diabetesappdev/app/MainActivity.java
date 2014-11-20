@@ -1,6 +1,7 @@
 package com.knattarna.androidapp.diabetesappdev.app;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
@@ -120,6 +121,9 @@ public class MainActivity extends ActionBarActivity {
                 public void onClick(View v) {
                     //holder.text.setText("You bastard, you clicked me!");
                     Toast.makeText(context, "Clicked me!", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(context, ActivityWindow.class);
+                                                context.startActivity(intent);
+
                 }
                });
 
