@@ -17,7 +17,7 @@ import android.widget.ListView;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
-
+import android.content.Intent;
 import java.util.List;
 
 import java.util.ArrayList;
@@ -120,6 +120,8 @@ public class MainActivity extends ActionBarActivity {
                 public void onClick(View v) {
                     //holder.text.setText("You bastard, you clicked me!");
                     Toast.makeText(context, "Clicked me!", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(context, ActivityWindow.class);
+                    context.startActivity(intent);
                 }
                });
 
