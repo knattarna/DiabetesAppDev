@@ -9,15 +9,19 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.os.Build;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import java.util.List;
 
 import java.util.ArrayList;
+import java.util.TooManyListenersException;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -109,6 +113,17 @@ public class MainActivity extends ActionBarActivity {
 
             //set the values of the inner views
             holder.text.setText(objects.get(position));
+
+            //add onClick to the textView
+            holder.text.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //holder.text.setText("You bastard, you clicked me!");
+                    Toast.makeText(context, "Clicked me!", Toast.LENGTH_SHORT).show();
+                }
+               });
+
+
 
 
             return row;
