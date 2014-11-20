@@ -13,7 +13,8 @@ import android.view.ViewGroup;
 import android.os.Build;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-
+import android.widget.Button;
+import android.widget.TextView;
 import java.util.List;
 
 import java.util.ArrayList;
@@ -67,7 +68,8 @@ public class MainActivity extends ActionBarActivity {
 
     //todo change List<String> to Objects[] objects for Activity Objects or smthing
 
-   public static class ActivityAdapter extends ArrayAdapter {
+
+    public static class ActivityAdapter extends ArrayAdapter {
 
         private Context context;
         private int resourceid;
@@ -86,15 +88,39 @@ public class MainActivity extends ActionBarActivity {
         @Override
         public View getView(int position, View convertView, ViewGroup parent)
         {
+            ViewHolder holder;
             View row = convertView; //current list-item maybe Iduntknow
+
             LayoutInflater inflater = ((android.app.Activity) this.context).getLayoutInflater();
 
             if (row == null)
             {
+                //inflates the xml view list
                 row = inflater.inflate(this.layoutid, parent, false);
+                holder = new ViewHolder();
+                holder.text = (TextView)row.findViewById(R.id.list_item_meal);
+
+                row.setTag(holder);
+            }
+            else
+            {
+                holder = (ViewHolder)row.getTag();
             }
 
+            //set the values of the inner views
+            holder.text.setText(objects.get(position));
+
+
             return row;
+        }
+
+        /**
+         *  Inner class that holds the views within the layout.
+         *  This means we don't need to call findViewById more than once
+         *  every inflate and we can easily modify fields of the inner views
+         */
+        private static class ViewHolder {
+            public TextView text;
         }
     }
 
