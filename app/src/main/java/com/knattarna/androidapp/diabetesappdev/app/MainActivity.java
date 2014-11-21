@@ -27,6 +27,8 @@ import java.util.TooManyListenersException;
 
 public class MainActivity extends ActionBarActivity {
 
+    private Day ToDaysActivitys = new Day();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,10 +38,13 @@ public class MainActivity extends ActionBarActivity {
         //add a fragment to the layout
         if (savedInstanceState == null)
         {
+
+
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.container, new PlaceholderFragment())
                     .commit();
         }
+
     }
 
 
@@ -156,7 +161,6 @@ public class MainActivity extends ActionBarActivity {
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-
             ArrayList<String> meals = new ArrayList<String>() {{
                 add("Breakfast");
                 add("Brunch");

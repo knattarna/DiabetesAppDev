@@ -82,9 +82,7 @@ public class ActivityWindow extends ActionBarActivity {
             }
         });
 
-        /** Get the current time */
-       // pHour = 13;
-       // pMinute = 37;
+
 
         /** Display the current time in the TextView */
         updateDisplay();
