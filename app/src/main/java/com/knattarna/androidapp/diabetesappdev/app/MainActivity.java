@@ -127,7 +127,7 @@ public class MainActivity extends ActionBarActivity {
                     //holder.text.setText("You bastard, you clicked me!");
                     Toast.makeText(context, "Clicked me!", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(context, ActivityWindow.class);
-                                                context.startActivity(intent);
+                    context.startActivity(intent);
 
                 }
                });
