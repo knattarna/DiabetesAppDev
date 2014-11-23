@@ -65,7 +65,7 @@ public class ActivityWindow extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_activity_window);
 
-        /** Enable up button           */
+        /** Enable up button */
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         /** Capture our View elements */
