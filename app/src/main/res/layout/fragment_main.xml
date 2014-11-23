@@ -19,7 +19,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Fredag 11/14"
         android:id="@+id/textViewDay"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"

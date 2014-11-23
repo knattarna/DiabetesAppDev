@@ -1,6 +1,7 @@
 package com.knattarna.androidapp.diabetesappdev.app;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
@@ -17,7 +18,7 @@ import android.widget.ListView;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.content.Intent;
+
 import java.util.List;
 
 import java.util.ArrayList;
@@ -25,6 +26,8 @@ import java.util.TooManyListenersException;
 
 
 public class MainActivity extends ActionBarActivity {
+
+    private Day ToDaysActivitys = new Day();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,10 +38,13 @@ public class MainActivity extends ActionBarActivity {
         //add a fragment to the layout
         if (savedInstanceState == null)
         {
+
+
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.container, new PlaceholderFragment())
                     .commit();
         }
+
     }
 
 
@@ -121,7 +127,8 @@ public class MainActivity extends ActionBarActivity {
                     //holder.text.setText("You bastard, you clicked me!");
                     Toast.makeText(context, "Clicked me!", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(context, ActivityWindow.class);
-                    context.startActivity(intent);
+                                                context.startActivity(intent);
+
                 }
                });
 
@@ -154,7 +161,6 @@ public class MainActivity extends ActionBarActivity {
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-
             ArrayList<String> meals = new ArrayList<String>() {{
                 add("Breakfast");
                 add("Brunch");

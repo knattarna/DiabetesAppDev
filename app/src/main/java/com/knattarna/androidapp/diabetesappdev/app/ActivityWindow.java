@@ -2,6 +2,7 @@ package com.knattarna.androidapp.diabetesappdev.app;
 
 import android.app.Dialog;
 import android.app.TimePickerDialog;
+import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -10,17 +11,16 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
-import java.util.Calendar;
 
 
 public class ActivityWindow extends ActionBarActivity {
 
     /** Private members of the class */
     private TextView displayTime;
-    private Button pickTime;
 
-    private int pHour;
-    private int pMinute;
+    private Activity act = new Activity("Frukost", 13,37);
+    //private int pHour;
+    //private int pMinute;
     /** This integer will uniquely define the dialog to be used for displaying time picker.*/
     static final int TIME_DIALOG_ID = 0;
 
@@ -28,8 +28,7 @@ public class ActivityWindow extends ActionBarActivity {
     private TimePickerDialog.OnTimeSetListener mTimeSetListener =
             new TimePickerDialog.OnTimeSetListener() {
                 public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                    pHour = hourOfDay;
-                    pMinute = minute;
+                    act.setTime(hourOfDay, minute);
                     updateDisplay();
                     displayToast();
                 }
@@ -41,8 +40,8 @@ public class ActivityWindow extends ActionBarActivity {
     private void updateDisplay() {
         displayTime.setText(
                 new StringBuilder()
-                        .append(pad(pHour)).append(":")
-                        .append(pad(pMinute)));
+                        .append(pad(act.getHour())).append(":")
+                        .append(pad(act.getMin())));
     }
 
     /** Displays a notification when the time is updated */
@@ -70,18 +69,25 @@ public class ActivityWindow extends ActionBarActivity {
 
         /** Capture our View elements */
         displayTime = (TextView) findViewById(R.id.textViewTimeDisplay);
-        pickTime = (Button) findViewById(R.id.buttonChangeTIme);
-
+        Button pickTime = (Button) findViewById(R.id.buttonChangeTIme);
+        Button SaveAct = (Button) findViewById(R.id.buttonSave);
         /** Listener for click event of the button */
         pickTime.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 showDialog(TIME_DIALOG_ID);
             }
         });
+        SaveAct.setOnClickListener(new View.OnClickListener() {
 
-        /** Get the current time */
-        pHour = 13;
-        pMinute = 37;
+
+            public void onClick(View v) {
+                Intent i= new Intent(ActivityWindow.this, MainActivity.class);
+
+                startActivity(i);
+            }
+        });
+
+
 
         /** Display the current time in the TextView */
         updateDisplay();
@@ -94,7 +100,7 @@ public class ActivityWindow extends ActionBarActivity {
         switch (id) {
             case TIME_DIALOG_ID:
                 return new TimePickerDialog(this,
-                        mTimeSetListener, pHour, pMinute, true);
+                        mTimeSetListener, act.getHour(), act.getMin(), true);
         }
         return null;
     }
