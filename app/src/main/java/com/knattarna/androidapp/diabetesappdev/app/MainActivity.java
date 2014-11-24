@@ -27,8 +27,9 @@ import java.util.TooManyListenersException;
 
 public class MainActivity extends ActionBarActivity {
 
-    private Day ToDaysActivitys = new Day();
-
+    private Day TodaysActivities = new Day();
+    private Context context = getBaseContext();
+    private TextView mday = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,6 +45,17 @@ public class MainActivity extends ActionBarActivity {
                     .add(R.id.container, new PlaceholderFragment())
                     .commit();
         }
+
+        /* TODO This is shitty coding, needs to be fixed. Someone should be fired ...*/
+
+        mday = (TextView) findViewById(R.id.textViewDay);
+
+        mday.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // TODO do things
+            }
+        });
 
     }
 
