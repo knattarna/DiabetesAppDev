@@ -70,7 +70,7 @@ public class MainActivity extends ActionBarActivity {
     *   for custom views.
     */
 
-    //todo change List<String> to Objects[] objects for Activity Objects or smthing
+    //TODO change List<String> to Objects[] objects for Activity Objects or smthing
 
 
     public static class ActivityAdapter extends ArrayAdapter {

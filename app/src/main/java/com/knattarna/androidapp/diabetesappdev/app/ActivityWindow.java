@@ -69,6 +69,7 @@ public class ActivityWindow extends ActionBarActivity {
 
         /** Listener for click event of the button */
         pickTime.setOnClickListener(new View.OnClickListener() {
+            @Override
             public void onClick(View v) {
                 showDialog(TIME_DIALOG_ID);
             }

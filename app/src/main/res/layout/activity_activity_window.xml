@@ -58,11 +58,12 @@
         android:background="#ffffffff" />
 
     <EditText
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:id="@+id/editText"
         android:layout_below="@+id/textViewInfo"
-        android:layout_centerHorizontal="true"
-        android:editable="true" />
+        android:editable="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
 
 </RelativeLayout>
