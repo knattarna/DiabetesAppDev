@@ -1,33 +1,40 @@
 package com.knattarna.androidapp.diabetesappdev.app;
 
-import android.content.Context;
-import android.content.Intent;
+import android.app.Dialog;
+import android.app.FragmentTransaction;
+import android.app.ListFragment;
+
+import android.app.TimePickerDialog;
 import android.support.v7.app.ActionBarActivity;
-import android.support.v7.app.ActionBar;
-import android.support.v4.app.Fragment;
+
+import android.app.Fragment;
 import android.os.Bundle;
+
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
+
 import android.view.ViewGroup;
-import android.os.Build;
 import android.widget.ArrayAdapter;
-import android.widget.ListView;
+
 import android.widget.Button;
+import android.widget.ListView;
+
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
-import android.content.Intent;
-import java.util.List;
 
 import java.util.ArrayList;
-import java.util.TooManyListenersException;
+
+import static android.widget.Toast.makeText;
+
 
 
 public class MainActivity extends ActionBarActivity {
 
-    private Day ToDaysActivitys = new Day();
+    //this should later be the week object global to the scope
+    private static Day today = new Day();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,17 +43,13 @@ public class MainActivity extends ActionBarActivity {
 
         //if there is no previously saved instance of the app
         //add a fragment to the layout
-        if (savedInstanceState == null)
-        {
-
-
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.container, new PlaceholderFragment())
-                    .commit();
+        if (savedInstanceState == null) {
+            //add an initial fragment to main window
+            DayFragment day = new DayFragment(today.getDayActs());
+            getFragmentManager().beginTransaction().add(R.id.container, day).commit();
         }
 
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -72,121 +75,165 @@ public class MainActivity extends ActionBarActivity {
 
 
     /**
-    *   Extending the ArrayAdapter to override getView() method
-    *   for custom views.
-    */
+     * activity fragment
+     * =============================================================================================
+     */
+    public static class ActivityFragment extends Fragment {
 
-    //TODO change List<String> to Objects[] objects for Activity Objects or smthing
+        private Button pickTime = null;
+        private Button saveAct = null;
+        private TextView displayTime = null;
+        private Activity curr_act = new Activity("Frukost", 13, 37);
+        static final int TIME_DIALOG_ID = 0;
 
+        public ActivityFragment(Activity act) {
+            super();
 
-    public static class ActivityAdapter extends ArrayAdapter {
-
-        private Context context;
-        private int resourceid;
-        private int layoutid;
-        private List<String> objects;
-
-        public ActivityAdapter (Context ctext, int layoutid, int resourceid, List<String> objects) {
-            super(ctext, layoutid, resourceid, objects);
-
-            this.context = ctext;
-            this.resourceid = resourceid;
-            this.layoutid = layoutid;
-            this.objects = objects;
+            if(act != null)
+                this.curr_act = act;
         }
 
         @Override
-        public View getView(int position, View convertView, ViewGroup parent)
-        {
-            ViewHolder holder;
-            View row = convertView; //current list-item maybe Iduntknow
+        public void onActivityCreated(Bundle savedInstanceState) {
+            if (savedInstanceState == null) {
+                super.onActivityCreated(savedInstanceState);
 
-            LayoutInflater inflater = ((android.app.Activity) this.context).getLayoutInflater();
+                pickTime = (Button) getActivity().findViewById(R.id.buttonChangeTIme);
+                saveAct = (Button) getActivity().findViewById(R.id.buttonSave);
+                displayTime = (TextView) getActivity().findViewById(R.id.textViewTimeDisplay);
 
-            if (row == null)
-            {
-                //inflates the xml view list
-                row = inflater.inflate(this.layoutid, parent, false);
-                holder = new ViewHolder();
-                holder.text = (TextView)row.findViewById(R.id.list_item_meal);
+                // Listener for click event of the button
+                pickTime.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        getActivity().showDialog(TIME_DIALOG_ID);
+                    }
+                });
 
-                row.setTag(holder);
+                saveAct.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        DayFragment day = new DayFragment(today.getDayActs());
+                        // Replace whatever is in the fragment_container view with this fragment,
+                        // and add the transaction to the back stack
+                        FragmentTransaction fragTrans = getFragmentManager().beginTransaction();
+                        fragTrans.replace(R.id.container, day);
+                        fragTrans.addToBackStack(null);
+                        // Commit the transaction
+                        fragTrans.commit();
+                    }
+                });
+
             }
-            else
-            {
-                holder = (ViewHolder)row.getTag();
-            }
+            updateDisplay();
+        }
 
-            //set the values of the inner views
-            holder.text.setText(objects.get(position));
-
-            //add onClick to the textView
-            holder.text.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    //holder.text.setText("You bastard, you clicked me!");
-                    Toast.makeText(context, "Clicked me!", Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(context, ActivityWindow.class);
-                     context.startActivity(intent);
-                }
-               });
-
-
-
-
-            return row;
+        @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+            View rootview = null;
+            rootview = (View) inflater.inflate(R.layout.activity_activity_window, container, false);
+            return rootview;
         }
 
         /**
-         *  Inner class that holds the views within the layout.
-         *  This means we don't need to call findViewById more than once
-         *  every inflate and we can easily modify fields of the inner views
+         * Add padding to numbers less than ten
          */
-        private static class ViewHolder {
-            public TextView text;
+        private static String pad(int c) {
+            if (c >= 10)
+                return String.valueOf(c);
+            else
+                return "0" + String.valueOf(c);
         }
+
+        /**
+         * Updates the time in the TextView
+         */
+        private void updateDisplay() {
+            displayTime.setText(
+                    new StringBuilder()
+                            .append(pad(curr_act.getHour())).append(":")
+                            .append(pad(curr_act.getMin())));
+
+        }
+        /** Create a new dialog for time picker */
+
+        /**
+         * Displays a notification when the time is updated
+         */
+        private void displayToast() {
+            Toast.makeText(getActivity(), new StringBuilder().append("Time choosen is ").append(displayTime.getText()), Toast.LENGTH_SHORT).show();
+
+        }
+
+
+        /**
+         * Callback received when the user "picks" a time in the dialog
+         */
+        private TimePickerDialog.OnTimeSetListener mTimeSetListener =
+                new TimePickerDialog.OnTimeSetListener() {
+                    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                        curr_act.setTime(hourOfDay, minute);
+                        updateDisplay();
+                        displayToast();
+                    }
+                };
+
+        protected Dialog onCreateDialog(int id) {
+            switch (id) {
+                case TIME_DIALOG_ID:
+                    return new TimePickerDialog(getActivity(),
+                            mTimeSetListener, curr_act.getHour(), curr_act.getMin(), true);
+            }
+            return null;
+        }
+
     }
 
     /**
-     * A placeholder fragment containing a simple view.
+     * the day window fragment
+     * =============================================================================================
      */
-    public static class PlaceholderFragment extends Fragment {
 
-        public PlaceholderFragment() {
-            //super();
+    public static class DayFragment extends ListFragment {
+
+        private ArrayList<Activity> activities = null;
+        private ArrayList<String> activity_names = new ArrayList<String>(){};
+
+        public DayFragment(ArrayList<Activity> acts) {
+            super();
+
+            this.activities = acts;
+            //initialize the array of activities
+            for(int i = 0; i < activities.size(); ++i)
+            {
+                activity_names.add(activities.get(i).getName());
+            }
+                //this.activity_names.add(activities.get(i).getName().toString());
+
         }
 
         @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                                 Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-            ArrayList<String> meals = new ArrayList<String>() {{
-                add("Breakfast");
-                add("Brunch");
-                add("Lunch");
-                add("Snack");
-                add("Dinner");
-                add("Breakfast");
-                add("Brunch");
-                add("Lunch");
-                add("Snack");
-                add("Dinner");
-                add("Breakfast");
-                add("Brunch");
-                add("Lunch");
-                add("Snack");
-                add("Dinner");
-            }};
-
-            ActivityAdapter adapter = new ActivityAdapter(
+        public void onActivityCreated(Bundle savedInstanceState) {
+            super.onActivityCreated(savedInstanceState);
+            setListAdapter(new ArrayAdapter<String>(
                     getActivity(),
                     R.layout.list_item_meal,
                     R.id.list_item_meal,
-                    meals);
+                    activity_names));
+        }
 
-            ListView list = (ListView) rootView.findViewById(R.id.listView_meals);
-            list.setAdapter(adapter);
-            return rootView;
+        @Override
+        public void onListItemClick(ListView l, View v, int position, long id) {
+            makeText(getActivity(), "Clicked me!", Toast.LENGTH_SHORT).show();
+            ActivityFragment act = new ActivityFragment(activities.get(position));// Create new fragment and transaction
+
+            // Replace whatever is in the fragment_container view with this fragment,
+            // and add the transaction to the back stack
+            FragmentTransaction fragTrans = getFragmentManager().beginTransaction();
+            fragTrans.replace(R.id.container, act);
+            fragTrans.addToBackStack(null);
+            // Commit the transaction
+            fragTrans.commit();
         }
     }
 }

@@ -20,6 +20,14 @@ public class Activity
         this.info = null;
         BloodSLevel = 0;
     }
+    public Activity(Activity act)
+    {
+        this.name = act.getName();
+        this.hour = act.getHour();
+        this.min = act.getMin();
+        this.info = act.getInfo();
+        this.BloodSLevel = 0;
+    }
 
     public Activity(String name, int hour, int min) {
         this.name = name;

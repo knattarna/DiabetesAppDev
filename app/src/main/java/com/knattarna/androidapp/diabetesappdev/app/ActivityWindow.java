@@ -67,22 +67,21 @@ public class ActivityWindow extends ActionBarActivity {
         Button pickTime = (Button) findViewById(R.id.buttonChangeTIme);
         Button SaveAct = (Button) findViewById(R.id.buttonSave);
         /** Listener for click event of the button */
+
         pickTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 showDialog(TIME_DIALOG_ID);
             }
         });
+
         SaveAct.setOnClickListener(new View.OnClickListener() {
-
-
             public void onClick(View v) {
                 Intent i= new Intent(ActivityWindow.this, MainActivity.class);
 
                 startActivity(i);
             }
         });
-
 
 
         /** Display the current time in the TextView */
