@@ -1,15 +1,19 @@
 package com.knattarna.androidapp.diabetesappdev.app;
 
 import android.app.Dialog;
+import android.app.DialogFragment;
 import android.app.FragmentTransaction;
 import android.app.ListFragment;
 
 import android.app.TimePickerDialog;
+import android.view.inputmethod.EditorInfo;
 import android.support.v7.app.ActionBarActivity;
 
 import android.app.Fragment;
 import android.os.Bundle;
 
+import android.text.format.DateFormat;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -19,6 +23,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 
 import android.widget.TextView;
@@ -33,8 +38,12 @@ import static android.widget.Toast.makeText;
 
 public class MainActivity extends ActionBarActivity {
 
+    //tags for the fragments
+    private static final String TAG_DAY = "DAY";
+
     //this should later be the week object global to the scope
-    private static Day today = new Day();
+    private static Day CURRENT_DAY      = new Day();
+    private static Activity CURRENT_ACT = new Activity();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,7 +54,7 @@ public class MainActivity extends ActionBarActivity {
         //add a fragment to the layout
         if (savedInstanceState == null) {
             //add an initial fragment to main window
-            DayFragment day = new DayFragment(today.getDayActs());
+            DayFragment day = new DayFragment(CURRENT_DAY.getDayActs());
             getFragmentManager().beginTransaction().add(R.id.container, day).commit();
         }
 
@@ -73,24 +82,42 @@ public class MainActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-
+    @Override
+    public void onBackPressed()
+    {
+        //this works buuut normal behaviour isn't there
+        getFragmentManager().popBackStack();
+    }
     /**
      * activity fragment
      * =============================================================================================
      */
     public static class ActivityFragment extends Fragment {
 
-        private Button pickTime = null;
-        private Button saveAct = null;
-        private TextView displayTime = null;
-        private Activity curr_act = new Activity("Frukost", 13, 37);
-        static final int TIME_DIALOG_ID = 0;
 
-        public ActivityFragment(Activity act) {
-            super();
+        private Button saveAct          = null;
+        private TextView displayTime    = null;
+        private TextView name           = null;
+        private EditText description    = null;
+        private EditText blood          = null;
 
-            if(act != null)
-                this.curr_act = act;
+        //the current activity only changes on save
+        //private static Activity curr_act = null;
+        //the temporal activity changes withing the activity fragment
+        private static Activity temp_act = null;
+        //static final int TIME_DIALOG_ID = 0;
+
+        public ActivityFragment() {
+
+            //this.curr_act = act;
+            //making a copy
+            this.temp_act = new Activity(
+                    CURRENT_ACT.getName(),
+                    CURRENT_ACT.getHour(),
+                    CURRENT_ACT.getMin(),
+                    CURRENT_ACT.getInfo(),
+                    CURRENT_ACT.getBloodSLevel());
+
         }
 
         @Override
@@ -98,27 +125,66 @@ public class MainActivity extends ActionBarActivity {
             if (savedInstanceState == null) {
                 super.onActivityCreated(savedInstanceState);
 
-                pickTime = (Button) getActivity().findViewById(R.id.buttonChangeTIme);
-                saveAct = (Button) getActivity().findViewById(R.id.buttonSave);
+                saveAct     = (Button) getActivity().findViewById(R.id.buttonSave);
                 displayTime = (TextView) getActivity().findViewById(R.id.textViewTimeDisplay);
+                description = (EditText) getActivity().findViewById(R.id.editText);
+                name        = (TextView) getActivity().findViewById(R.id.textViewName);
+                blood       = (EditText) getActivity().findViewById(R.id.editText2);
+                // Listener for events within the activity fragment
 
-                // Listener for click event of the button
-                pickTime.setOnClickListener(new View.OnClickListener() {
+                //set time
+                displayTime.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        getActivity().showDialog(TIME_DIALOG_ID);
+                       TimeDialog dia = new TimeDialog();
+                       dia.show(getFragmentManager(), "timePicker");
+                       updateDisplay();
                     }
                 });
 
+                //edit text
+                description.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+                    @Override
+                    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                        if (actionId == EditorInfo.IME_ACTION_NEXT) {
+                            temp_act.setInfo(description.getText().toString());
+                        }
+                        return false;
+                    }
+                });
+
+                //edit text
+                blood.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+                    @Override
+                    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                        if (actionId == EditorInfo.IME_ACTION_DONE) {
+                           try {
+                               temp_act.setBloodSLevel(Integer.parseInt(blood.getText().toString()));
+                           }catch (NumberFormatException e)
+                            {
+                                return false;
+                            }
+                          }
+                        return false;
+                    }
+                });
+
+                //save changes
                 saveAct.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        DayFragment day = new DayFragment(today.getDayActs());
+                        //java is weird cannot do CURRENT_ACT = temp_act
+                        CURRENT_ACT.setInfo(temp_act.getInfo());
+                        CURRENT_ACT.setName(temp_act.getName());
+                        CURRENT_ACT.setTime(temp_act.getHour(),temp_act.getMin());
+                        CURRENT_ACT.setBloodSLevel(temp_act.getBloodSLevel());
+
+                        DayFragment day = new DayFragment(CURRENT_DAY.getDayActs());
                         // Replace whatever is in the fragment_container view with this fragment,
                         // and add the transaction to the back stack
                         FragmentTransaction fragTrans = getFragmentManager().beginTransaction();
-                        fragTrans.replace(R.id.container, day);
-                        fragTrans.addToBackStack(null);
+                        fragTrans.replace(R.id.container,day);
+                        fragTrans.addToBackStack(TAG_DAY);
                         // Commit the transaction
                         fragTrans.commit();
                     }
@@ -151,11 +217,12 @@ public class MainActivity extends ActionBarActivity {
         private void updateDisplay() {
             displayTime.setText(
                     new StringBuilder()
-                            .append(pad(curr_act.getHour())).append(":")
-                            .append(pad(curr_act.getMin())));
-
+                            .append(pad(temp_act.getHour())).append(":")
+                            .append(pad(temp_act.getMin())));
+            description.setText(temp_act.getInfo());
+            name.setText(temp_act.getName());
+            //blood.setText(temp_act.getBloodSLevel());
         }
-        /** Create a new dialog for time picker */
 
         /**
          * Displays a notification when the time is updated
@@ -165,26 +232,23 @@ public class MainActivity extends ActionBarActivity {
 
         }
 
-
-        /**
-         * Callback received when the user "picks" a time in the dialog
-         */
-        private TimePickerDialog.OnTimeSetListener mTimeSetListener =
-                new TimePickerDialog.OnTimeSetListener() {
-                    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                        curr_act.setTime(hourOfDay, minute);
-                        updateDisplay();
-                        displayToast();
-                    }
-                };
-
-        protected Dialog onCreateDialog(int id) {
-            switch (id) {
-                case TIME_DIALOG_ID:
-                    return new TimePickerDialog(getActivity(),
-                            mTimeSetListener, curr_act.getHour(), curr_act.getMin(), true);
+        public static class TimeDialog extends DialogFragment implements TimePickerDialog.OnTimeSetListener
+        {
+            @Override
+            public Dialog onCreateDialog(Bundle savedInstanceState)
+            {
+                return new TimePickerDialog(getActivity(),this,
+                        temp_act.getHour(),
+                        temp_act.getMin(),
+                        DateFormat.is24HourFormat(getActivity()));
             }
-            return null;
+
+            @Override
+            public void onTimeSet(TimePicker view, int hourOfDay,int minute)
+            {
+                temp_act.setTime(hourOfDay,minute);
+            }
+
         }
 
     }
@@ -225,12 +289,13 @@ public class MainActivity extends ActionBarActivity {
         @Override
         public void onListItemClick(ListView l, View v, int position, long id) {
             makeText(getActivity(), "Clicked me!", Toast.LENGTH_SHORT).show();
-            ActivityFragment act = new ActivityFragment(activities.get(position));// Create new fragment and transaction
+            CURRENT_ACT = activities.get(position);
+            ActivityFragment act = new ActivityFragment();// Create new fragment and transaction
 
             // Replace whatever is in the fragment_container view with this fragment,
             // and add the transaction to the back stack
             FragmentTransaction fragTrans = getFragmentManager().beginTransaction();
-            fragTrans.replace(R.id.container, act);
+            fragTrans.replace(R.id.container, act, TAG_DAY);
             fragTrans.addToBackStack(null);
             // Commit the transaction
             fragTrans.commit();

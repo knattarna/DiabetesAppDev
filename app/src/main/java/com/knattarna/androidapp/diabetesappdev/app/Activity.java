@@ -26,7 +26,7 @@ public class Activity
         this.hour = act.getHour();
         this.min = act.getMin();
         this.info = act.getInfo();
-        this.BloodSLevel = 0;
+        this.BloodSLevel = act.getBloodSLevel();
     }
 
     public Activity(String name, int hour, int min) {
@@ -70,6 +70,7 @@ public class Activity
         return info;
     }
 
+    public double getBloodSLevel() {return  BloodSLevel;}
     public void setBloodSLevel(double bloodSLevel) {
         BloodSLevel = bloodSLevel;
     }
