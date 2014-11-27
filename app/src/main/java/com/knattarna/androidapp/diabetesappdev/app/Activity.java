@@ -12,13 +12,24 @@ public class Activity
     private int min;
     private String info;
     private double BloodSLevel;
+    private boolean done;
+
 //Few constructors
     public Activity() {
-        this.name = "Frukost";
+        this.name = "Test";
         this.hour = 13;
         this.min = 37;
         this.info = null;
         BloodSLevel = 0;
+        this.done = false;
+    }
+    public Activity(Activity act)
+    {
+        this.name = act.getName();
+        this.hour = act.getHour();
+        this.min = act.getMin();
+        this.info = act.getInfo();
+        this.BloodSLevel = act.getBloodSLevel();
     }
 
     public Activity(String name, int hour, int min) {
@@ -27,6 +38,7 @@ public class Activity
         this.min = min;
         this.info = null;
         BloodSLevel = 0;
+        this.done = false;
     }
 
     public Activity(String name, int hour, int min, String info) {
@@ -35,13 +47,15 @@ public class Activity
         this.min = min;
         this.info = info;
         BloodSLevel = Double.parseDouble(null);
+        this.done = false;
     }
-    public Activity(String name, int hour, int min, String info, double bloodSLevel) {
+    public Activity(String name, int hour, int min, String info, double bloodSLevel, boolean done) {
         this.name = name;
         this.hour = hour;
         this.min = min;
         this.info = info;
         BloodSLevel = bloodSLevel;
+        this.done = done;
     }
     //Lite Getfunktioner
     public String getName()
@@ -62,6 +76,7 @@ public class Activity
         return info;
     }
 
+    public double getBloodSLevel() {return  BloodSLevel;}
     public void setBloodSLevel(double bloodSLevel) {
         BloodSLevel = bloodSLevel;
     }
@@ -76,5 +91,13 @@ public class Activity
     {
         this.hour = hour;
         this.min = min;
+    }
+
+    public void setDone(boolean done) {
+        this.done = done;
+    }
+
+    public boolean isDone() {
+        return done;
     }
 }

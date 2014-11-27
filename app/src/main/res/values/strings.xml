@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">DiabetesAppDev</string>
+    <string name="app_name">Fredag 11/21</string>
     <string name="hello_world">Fredag 11/14</string>
     <string name="action_settings">Settings</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="title_activity_activity_window">ActivityWindow</string>
+    <string name="title_activity_activity_window">Edit Activity</string>
 
 </resources>

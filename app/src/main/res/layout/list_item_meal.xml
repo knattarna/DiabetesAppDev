@@ -1,24 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="48dp"
-    android:background="#F3F3F3">
+    android:layout_height="70dp"
+    android:background="#ffffff"
+    android:layout_margin="7.5dp"
+    android:descendantFocusability="blocksDescendants"
+    >
 
 
     <TextView
         android:id="@+id/list_item_meal"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:textSize="24dp"
+        android:layout_height="fill_parent"
+        android:textSize="50dp"
         android:layout_toLeftOf="@+id/checkBoxMeal"
         android:layout_toStartOf="@+id/checkBoxMeal"
-        android:layout_alignBottom="@+id/checkBoxMeal" />
+        android:layout_alignBottom="@+id/checkBoxMeal"
+        />
 
 
     <CheckBox
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="fill_parent"
         android:id="@+id/checkBoxMeal"
         android:layout_gravity="right"
         android:layout_centerVertical="true"

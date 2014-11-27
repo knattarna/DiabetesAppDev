@@ -34,8 +34,6 @@ public class ActivityWindow extends ActionBarActivity {
                 }
             };
 
-
-
     /** Updates the time in the TextView */
     private void updateDisplay() {
         displayTime.setText(
@@ -63,9 +61,6 @@ public class ActivityWindow extends ActionBarActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_activity_window);
-
-        /** Enable up button */
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         /** Capture our View elements */
         displayTime = (TextView) findViewById(R.id.textViewTimeDisplay);
@@ -105,5 +100,4 @@ public class ActivityWindow extends ActionBarActivity {
         }
         return null;
     }
-
 }
