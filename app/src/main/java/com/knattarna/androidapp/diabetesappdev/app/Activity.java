@@ -13,8 +13,8 @@ public class Activity
     private String info;
     private double BloodSLevel;
     private boolean done;
-
 //Few constructors
+
     public Activity() {
         this.name = "Test";
         this.hour = 13;
@@ -30,6 +30,7 @@ public class Activity
         this.min = act.getMin();
         this.info = act.getInfo();
         this.BloodSLevel = act.getBloodSLevel();
+        this.done = act.isDone();
     }
 
     public Activity(String name, int hour, int min) {
