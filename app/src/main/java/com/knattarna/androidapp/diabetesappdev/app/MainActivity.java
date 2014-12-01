@@ -1,11 +1,14 @@
 package com.knattarna.androidapp.diabetesappdev.app;
 
+import android.app.AlarmManager;
+
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.FragmentTransaction;
 import android.app.ListFragment;
 
 import android.app.TimePickerDialog;
+
 import android.view.inputmethod.EditorInfo;
 import android.support.v7.app.ActionBarActivity;
 
@@ -31,9 +34,17 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.zip.Inflater;
+
+import android.content.Intent;
+import android.content.Context;
+import android.widget.CheckBox;
+
+
+import org.apache.http.conn.ssl.AllowAllHostnameVerifier;
 
 import static android.widget.Toast.makeText;
-
 
 
 public class MainActivity extends ActionBarActivity {
@@ -54,7 +65,7 @@ public class MainActivity extends ActionBarActivity {
         //add a fragment to the layout
         if (savedInstanceState == null) {
             //add an initial fragment to main window
-            DayFragment day = new DayFragment(CURRENT_DAY.getDayActs());
+            DayFragment day = new DayFragment();
             getFragmentManager().beginTransaction().add(R.id.container, day).commit();
         }
 
@@ -101,6 +112,8 @@ public class MainActivity extends ActionBarActivity {
         private EditText description    = null;
         private EditText blood          = null;
 
+        //get the alarm manager
+        private AlarmManager ALARM = null;
         //the current activity only changes on save
         //private static Activity curr_act = null;
         //the temporal activity changes withing the activity fragment
@@ -109,15 +122,13 @@ public class MainActivity extends ActionBarActivity {
 
         public ActivityFragment() {
 
-            //this.curr_act = act;
             //making a copy
             this.temp_act = new Activity(
                     CURRENT_ACT.getName(),
                     CURRENT_ACT.getHour(),
                     CURRENT_ACT.getMin(),
                     CURRENT_ACT.getInfo(),
-                    CURRENT_ACT.getBloodSLevel());
-
+                    CURRENT_ACT.getBloodSLevel(),false);
         }
 
         @Override
@@ -125,7 +136,7 @@ public class MainActivity extends ActionBarActivity {
             if (savedInstanceState == null) {
                 super.onActivityCreated(savedInstanceState);
 
-                saveAct     = (Button) getActivity().findViewById(R.id.buttonSave);
+                saveAct     = (Button)   getActivity().findViewById(R.id.buttonSave);
                 displayTime = (TextView) getActivity().findViewById(R.id.textViewTimeDisplay);
                 description = (EditText) getActivity().findViewById(R.id.editText);
                 name        = (TextView) getActivity().findViewById(R.id.textViewName);
@@ -179,14 +190,25 @@ public class MainActivity extends ActionBarActivity {
                         CURRENT_ACT.setTime(temp_act.getHour(),temp_act.getMin());
                         CURRENT_ACT.setBloodSLevel(temp_act.getBloodSLevel());
 
-                        DayFragment day = new DayFragment(CURRENT_DAY.getDayActs());
+                        //reset an alarm for this activity (should identify the same PendingIntent
+                        ALARM = (AlarmManager) getActivity().getSystemService(Context.ALARM_SERVICE);
+
+                        CURRENT_ACT.setAlarmIntent(getActivity().getBaseContext(),new Intent(getActivity(),AlarmReceiver.class));
+
+                        ALARM.set(AlarmManager.RTC_WAKEUP, CURRENT_ACT.getTime().getTimeInMillis(),
+                                CURRENT_ACT.getAlarmIntent());
+
+
+                        //OMG i found the answer
+                        getFragmentManager().popBackStack();
+                        /*DayFragment day = new DayFragment();
                         // Replace whatever is in the fragment_container view with this fragment,
                         // and add the transaction to the back stack
                         FragmentTransaction fragTrans = getFragmentManager().beginTransaction();
                         fragTrans.replace(R.id.container,day);
-                        fragTrans.addToBackStack(TAG_DAY);
+                        fragTrans.addToBackStack(null);
                         // Commit the transaction
-                        fragTrans.commit();
+                        fragTrans.commit();*/
                     }
                 });
 
@@ -221,7 +243,7 @@ public class MainActivity extends ActionBarActivity {
                             .append(pad(temp_act.getMin())));
             description.setText(temp_act.getInfo());
             name.setText(temp_act.getName());
-            //blood.setText(temp_act.getBloodSLevel());
+            blood.setText((String.valueOf(temp_act.getBloodSLevel())));
         }
 
         /**
@@ -232,8 +254,14 @@ public class MainActivity extends ActionBarActivity {
 
         }
 
-        public static class TimeDialog extends DialogFragment implements TimePickerDialog.OnTimeSetListener
+        //says it should be static, however the Outerclass.this.function() doesnt work in static context
+        public class TimeDialog extends DialogFragment implements TimePickerDialog.OnTimeSetListener
         {
+            public TimeDialog()
+            {
+                super();
+            }
+
             @Override
             public Dialog onCreateDialog(Bundle savedInstanceState)
             {
@@ -247,6 +275,8 @@ public class MainActivity extends ActionBarActivity {
             public void onTimeSet(TimePicker view, int hourOfDay,int minute)
             {
                 temp_act.setTime(hourOfDay,minute);
+                ActivityFragment.this.updateDisplay();
+                ActivityFragment.this.displayToast();
             }
 
         }
@@ -260,26 +290,23 @@ public class MainActivity extends ActionBarActivity {
 
     public static class DayFragment extends ListFragment {
 
-        private ArrayList<Activity> activities = null;
+
         private ArrayList<String> activity_names = new ArrayList<String>(){};
 
-        public DayFragment(ArrayList<Activity> acts) {
+        public DayFragment()
+        {
             super();
 
-            this.activities = acts;
-            //initialize the array of activities
-            for(int i = 0; i < activities.size(); ++i)
+            for(int i = 0; i < CURRENT_DAY.getDayActs().size(); ++i)
             {
-                activity_names.add(activities.get(i).getName());
+                activity_names.add(CURRENT_DAY.getDayActs().get(i).getName());
             }
-                //this.activity_names.add(activities.get(i).getName().toString());
-
         }
 
         @Override
         public void onActivityCreated(Bundle savedInstanceState) {
             super.onActivityCreated(savedInstanceState);
-            setListAdapter(new ArrayAdapter<String>(
+            setListAdapter(new DayAdapter<String>(
                     getActivity(),
                     R.layout.list_item_meal,
                     R.id.list_item_meal,
@@ -288,8 +315,8 @@ public class MainActivity extends ActionBarActivity {
 
         @Override
         public void onListItemClick(ListView l, View v, int position, long id) {
-            makeText(getActivity(), "Clicked me!", Toast.LENGTH_SHORT).show();
-            CURRENT_ACT = activities.get(position);
+
+            CURRENT_ACT = CURRENT_DAY.getDayActs().get(position);
             ActivityFragment act = new ActivityFragment();// Create new fragment and transaction
 
             // Replace whatever is in the fragment_container view with this fragment,
@@ -299,6 +326,38 @@ public class MainActivity extends ActionBarActivity {
             fragTrans.addToBackStack(null);
             // Commit the transaction
             fragTrans.commit();
+        }
+    }
+
+    public static class DayAdapter<String> extends ArrayAdapter<String>
+    {
+
+        private Context context = null;
+        public DayAdapter(Context context, int resource, int textViewResourceId, List<String> objects)
+        {
+            super(context, resource, textViewResourceId, objects);
+            this.context = context;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent)
+        {
+           //return super.getView(position, convertView, parent); View row = convertView;
+
+           View row = convertView;
+
+           if(row==null)
+           {
+               LayoutInflater inflater = LayoutInflater.from(context);
+               row=inflater.inflate(R.layout.list_item_meal, parent, false);
+           }
+
+           TextView text = (TextView) row.findViewById(R.id.list_item_meal);
+           CheckBox box = (CheckBox) row.findViewById(R.id.checkBoxMeal);
+
+           text.setText(CURRENT_DAY.getDayActs().get(position).getName());
+           box.setChecked(CURRENT_DAY.getDayActs().get(position).getDone());
+           return  row;
         }
     }
 }

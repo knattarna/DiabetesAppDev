@@ -1,28 +1,41 @@
 package com.knattarna.androidapp.diabetesappdev.app;
 
+import android.app.PendingIntent;
+import android.content.Intent;
+import android.content.Context;
+
+import java.util.Calendar;
+
 /**
  * Created by Jacob on 2014-11-20.
  * Activity class med lite set och get funktioner för acitvity window
  */
 public class Activity
 {
-    private String name;
-    //Kan göras till ett TIME objekt senare om vi vill
-    private int hour;
-    private int min;
-    private String info;
+
     private double BloodSLevel;
     private boolean done;
+
+    private String name         = null;
+    private Calendar time       = Calendar.getInstance();
+    private String info         = null;
+
+    //every activity holds a unique Intent that controls alarm on/off and reschedules etc
+    private PendingIntent alarmIntent = null;
+
 //Few constructors
 
     public Activity() {
-        this.name = "Test";
-        this.hour = 13;
-        this.min = 37;
+        this.name = "TesT";
+
+        this.time.set(Calendar.HOUR_OF_DAY,13);
+        this.time.set(Calendar.MINUTE,37);
+
         this.info = null;
         BloodSLevel = 0;
-        this.done = false;
+        isDone();
     }
+    /*
     public Activity(Activity act)
     {
         this.name = act.getName();
@@ -31,34 +44,45 @@ public class Activity
         this.info = act.getInfo();
         this.BloodSLevel = act.getBloodSLevel();
         this.done = act.isDone();
-    }
+    }*/
 
     public Activity(String name, int hour, int min) {
         this.name = name;
-        this.hour = hour;
-        this.min = min;
+
+        this.time.set(Calendar.HOUR_OF_DAY,hour);
+        this.time.set(Calendar.MINUTE,min);
+
         this.info = null;
         BloodSLevel = 0;
-        this.done = false;
+        isDone();
     }
 
     public Activity(String name, int hour, int min, String info) {
         this.name = name;
-        this.hour = hour;
-        this.min = min;
+
+
+        this.time.set(Calendar.HOUR_OF_DAY,hour);
+        this.time.set(Calendar.MINUTE,min);
+
         this.info = info;
         BloodSLevel = Double.parseDouble(null);
-        this.done = false;
+        isDone();
     }
+
+
     public Activity(String name, int hour, int min, String info, double bloodSLevel, boolean done) {
         this.name = name;
-        this.hour = hour;
-        this.min = min;
+
+        this.time.set(Calendar.HOUR_OF_DAY,hour);
+        this.time.set(Calendar.MINUTE,min);
+
         this.info = info;
         BloodSLevel = bloodSLevel;
-        this.done = done;
+        isDone();
     }
-    //Lite Getfunktioner
+
+
+    //get functions
     public String getName()
     {
         return this.name;
@@ -66,18 +90,28 @@ public class Activity
 
     public int getHour()
     {
-        return this.hour;
+        return this.time.get(Calendar.HOUR_OF_DAY);
     }
 
     public int getMin() {
-        return min;
+        return this.time.get(Calendar.MINUTE);
     }
+
+    public Calendar getTime() {return this.time;}
 
     public String getInfo() {
         return info;
     }
 
     public double getBloodSLevel() {return  BloodSLevel;}
+
+    public boolean getDone() {
+        return done;
+    }
+
+    public PendingIntent getAlarmIntent() { return alarmIntent; }
+
+    //set functions
     public void setBloodSLevel(double bloodSLevel) {
         BloodSLevel = bloodSLevel;
     }
@@ -88,17 +122,27 @@ public class Activity
     public void setName(String name) {
         this.name = name;
     }
+
     public void setTime(int hour, int min)
     {
-        this.hour = hour;
-        this.min = min;
+        this.time.set(Calendar.HOUR_OF_DAY,hour);
+        this.time.set(Calendar.MINUTE,min);
+
+        isDone();
     }
 
-    public void setDone(boolean done) {
-        this.done = done;
+    public void isDone()
+    {
+        this.done = this.time.getTimeInMillis() < System.currentTimeMillis();
     }
 
-    public boolean isDone() {
-        return done;
+
+    //sets the Intent to broadcast to the alarm receiver.. or something
+    public void setAlarmIntent(Context context, Intent intent)
+    {
+        this.alarmIntent = PendingIntent.getBroadcast(context,
+                                            (getHour()+getMin()),
+                                            intent,0);
     }
+
 }
