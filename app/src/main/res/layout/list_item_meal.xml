@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="70dp"
-    android:background="#aaaadd"
+    android:background="#ffaadd"
     android:layout_margin="7.5dp"
     android:descendantFocusability="blocksDescendants"
     >
@@ -12,11 +12,22 @@
         android:id="@+id/list_item_meal"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:textSize="50dp"
-        android:layout_toLeftOf="@+id/checkBoxMeal"
-        android:layout_toStartOf="@+id/checkBoxMeal"
+        android:textSize="30sp"
+        android:gravity="center_vertical"
+        android:layout_toLeftOf="@+id/list_item_time"
+        android:layout_toStartOf="@+id/list_item_time"
         android:layout_alignBottom="@+id/checkBoxMeal"
         />
+
+    <TextView
+        android:id="@+id/list_item_time"
+        android:layout_width="wrap_content"
+        android:layout_height="fill_parent"
+        android:textSize="20sp"
+        android:gravity="center_vertical"
+        android:layout_toLeftOf="@+id/checkBoxMeal"
+        android:layout_toStartOf="@+id/checkBoxMeal"
+        android:layout_alignBottom="@+id/checkBoxMeal" />
 
 
     <CheckBox

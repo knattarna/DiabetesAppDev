@@ -34,6 +34,7 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.zip.Inflater;
 
@@ -99,6 +100,21 @@ public class MainActivity extends ActionBarActivity {
         //this works buuut normal behaviour isn't there
         getFragmentManager().popBackStack();
     }
+
+
+    /**
+     * Helper functions
+     */
+
+
+    //Add padding to numbers less than ten
+    public static String pad(int c) {
+        if (c >= 10)
+            return String.valueOf(c);
+        else
+            return "0" + String.valueOf(c);
+    }
+
     /**
      * activity fragment
      * =============================================================================================
@@ -184,11 +200,22 @@ public class MainActivity extends ActionBarActivity {
                 saveAct.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+
+                        //have we changed the time of the object ?
+                        Boolean test = (CURRENT_ACT.getHour() == temp_act.getHour()) && (CURRENT_ACT.getMin() == temp_act.getMin());
+
+                        //get the time offset for changed time
+                        Calendar offset = Calendar.getInstance();
+
+                        offset.set(Calendar.HOUR_OF_DAY,(temp_act.getHour() - CURRENT_ACT.getTime().get(Calendar.HOUR_OF_DAY)));
+                        offset.set(Calendar.MINUTE, (temp_act.getMin() - CURRENT_ACT.getTime().get(Calendar.MINUTE)));
+
                         //java is weird cannot do CURRENT_ACT = temp_act
                         CURRENT_ACT.setInfo(temp_act.getInfo());
                         CURRENT_ACT.setName(temp_act.getName());
                         CURRENT_ACT.setTime(temp_act.getHour(),temp_act.getMin());
                         CURRENT_ACT.setBloodSLevel(temp_act.getBloodSLevel());
+
 
                         //reset an alarm for this activity (should identify the same PendingIntent
                         ALARM = (AlarmManager) getActivity().getSystemService(Context.ALARM_SERVICE);
@@ -198,6 +225,11 @@ public class MainActivity extends ActionBarActivity {
                         ALARM.set(AlarmManager.RTC_WAKEUP, CURRENT_ACT.getTime().getTimeInMillis(),
                                 CURRENT_ACT.getAlarmIntent());
 
+
+                        //only update if act is not done and time has changed value
+                        if( !temp_act.getDone() && !test) {
+                            CURRENT_DAY.updateDay(CURRENT_DAY.getDayActs().indexOf(CURRENT_ACT), offset);
+                        }
 
                         //OMG i found the answer
                         getFragmentManager().popBackStack();
@@ -221,16 +253,6 @@ public class MainActivity extends ActionBarActivity {
             View rootview = null;
             rootview = (View) inflater.inflate(R.layout.activity_activity_window, container, false);
             return rootview;
-        }
-
-        /**
-         * Add padding to numbers less than ten
-         */
-        private static String pad(int c) {
-            if (c >= 10)
-                return String.valueOf(c);
-            else
-                return "0" + String.valueOf(c);
         }
 
         /**
@@ -329,6 +351,7 @@ public class MainActivity extends ActionBarActivity {
         }
     }
 
+    //View editing within the rows of the DayFragment class is done via the ArrayAdapter getView method
     public static class DayAdapter<String> extends ArrayAdapter<String>
     {
 
@@ -353,10 +376,17 @@ public class MainActivity extends ActionBarActivity {
            }
 
            TextView text = (TextView) row.findViewById(R.id.list_item_meal);
+           TextView time = (TextView) row.findViewById(R.id.list_item_time);
            CheckBox box = (CheckBox) row.findViewById(R.id.checkBoxMeal);
 
            text.setText(CURRENT_DAY.getDayActs().get(position).getName());
-           box.setChecked(CURRENT_DAY.getDayActs().get(position).getDone());
+           time.setText(
+                   new StringBuilder()
+                           .append(pad(CURRENT_DAY.getDayActs().get(position).getHour())).append(":")
+                           .append(pad(CURRENT_DAY.getDayActs().get(position).getMin())));
+
+            box.setChecked(CURRENT_DAY.getDayActs().get(position).getDone());
+
            return  row;
         }
     }

@@ -131,6 +131,14 @@ public class Activity
         isDone();
     }
 
+    public void setTime(Calendar offset)
+    {
+
+        int hour = getHour()+offset.get(Calendar.HOUR_OF_DAY);
+        int min = getMin()+offset.get(Calendar.MINUTE);
+        this.setTime(hour,min);
+    }
+
     public void isDone()
     {
         this.done = this.time.getTimeInMillis() < System.currentTimeMillis();
@@ -141,7 +149,7 @@ public class Activity
     public void setAlarmIntent(Context context, Intent intent)
     {
         this.alarmIntent = PendingIntent.getBroadcast(context,
-                                            (getHour()+getMin()),
+                                            (getHour()+getMin()+this.time.DAY_OF_MONTH),
                                             intent,0);
     }
 

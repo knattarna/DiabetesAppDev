@@ -18,11 +18,12 @@ public class Day {
 
     private final ArrayList<String> ACTIVITIES = new ArrayList<String>() {
     {
-        add("Breakfast");
-        add("Brunch");
+        add("Frukost");
+        add("Mellanmål");
         add("Lunch");
-        add("Snack");
+        add("Mellanmål");
         add("Dinner");
+        add("Kvällsmål");
     }};
 
     public Day() {
@@ -31,16 +32,8 @@ public class Day {
         date = cal.getDisplayName(Calendar.DAY_OF_MONTH, Calendar.SHORT, Locale.US);
         dayOfTheWeek = cal.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, Locale.US);
 
-        //initialize the standard day of activities
-        dayActs = new ArrayList<Activity>() {
-             {
-                int htemp = 7;
-                for(int i = 0; i < ACTIVITIES.size(); ++i){
-                    Activity temp = new Activity(ACTIVITIES.get(i), htemp, 0);
-                    add(temp);
-                    htemp = htemp + 4;
-                }
-             }};
+        //fill day with standard activities
+        fillDay();
     }
 
     public String getDate(){ return date;}
@@ -53,5 +46,33 @@ public class Day {
 
     public void setDayOfTheWeek(String dayOfTheWeek) {
         dayOfTheWeek = dayOfTheWeek;
+    }
+
+    public void addActivity(Activity act)
+    {
+        dayActs.add(act);
+    }
+
+    public void fillDay()
+    {
+        //initialize the standard day of activities
+        dayActs = new ArrayList<Activity>() {
+            {
+                int htemp = 8;
+                for(int i = 0; i < ACTIVITIES.size(); ++i){
+                    Activity temp = new Activity(ACTIVITIES.get(i), htemp, 0);
+                    add(temp);
+                    htemp = htemp + 2;
+                }
+            }};
+    }
+
+    //updates every activity after this position with values dependent on this positions
+    public void updateDay(int position, Calendar offset)
+    {
+
+        for(++position;position < dayActs.size();++position) {
+            dayActs.get(position).setTime(offset);
+        }
     }
 }
