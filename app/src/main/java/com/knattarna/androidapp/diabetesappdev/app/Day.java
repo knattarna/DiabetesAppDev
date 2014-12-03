@@ -12,7 +12,7 @@ import java.util.Locale;
 public class Day {
 
 
-    private ArrayList<Activity> dayActs;
+    private ArrayList<SHELLActivity> dayActs;
     private String date;
     private String dayOfTheWeek;
 
@@ -40,7 +40,7 @@ public class Day {
 
     public String getDayOfTheWeek(){return dayOfTheWeek;}
 
-    public ArrayList<Activity> getDayActs(){return dayActs;}
+    public ArrayList<SHELLActivity> getDayActs(){return dayActs;}
 
     public void setDate(String date){this.date = date;}
 
@@ -48,7 +48,7 @@ public class Day {
         dayOfTheWeek = dayOfTheWeek;
     }
 
-    public void addActivity(Activity act)
+    public void addActivity(SHELLActivity act)
     {
         dayActs.add(act);
     }
@@ -56,11 +56,11 @@ public class Day {
     public void fillDay()
     {
         //initialize the standard day of activities
-        dayActs = new ArrayList<Activity>() {
+        dayActs = new ArrayList<SHELLActivity>() {
             {
                 int htemp = 8;
                 for(int i = 0; i < ACTIVITIES.size(); ++i){
-                    Activity temp = new Activity(ACTIVITIES.get(i), htemp, 0);
+                    SHELLActivity temp = new SHELLActivity(ACTIVITIES.get(i), htemp, 0);
                     add(temp);
                     htemp = htemp + 2;
                 }

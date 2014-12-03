@@ -2,25 +2,24 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="70dp"
-    android:background="#ffaadd"
-    android:layout_margin="7.5dp"
+    android:background="#ffffff"
     android:descendantFocusability="blocksDescendants"
     >
 
 
     <TextView
-        android:id="@+id/list_item_meal"
+        android:id="@+id/act_name"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:textSize="30sp"
         android:gravity="center_vertical"
-        android:layout_toLeftOf="@+id/list_item_time"
-        android:layout_toStartOf="@+id/list_item_time"
+        android:layout_toLeftOf="@+id/act_time"
+        android:layout_toStartOf="@+id/act_time"
         android:layout_alignBottom="@+id/checkBoxMeal"
         />
 
     <TextView
-        android:id="@+id/list_item_time"
+        android:id="@+id/act_time"
         android:layout_width="wrap_content"
         android:layout_height="fill_parent"
         android:textSize="20sp"

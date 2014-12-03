@@ -10,7 +10,7 @@ import java.util.Calendar;
  * Created by Jacob on 2014-11-20.
  * Activity class med lite set och get funktioner för acitvity window
  */
-public class Activity
+public class SHELLActivity
 {
 
     private double BloodSLevel;
@@ -25,7 +25,7 @@ public class Activity
 
 //Few constructors
 
-    public Activity() {
+    public SHELLActivity() {
         this.name = "TesT";
 
         this.time.set(Calendar.HOUR_OF_DAY,13);
@@ -46,7 +46,7 @@ public class Activity
         this.done = act.isDone();
     }*/
 
-    public Activity(String name, int hour, int min) {
+    public SHELLActivity(String name, int hour, int min) {
         this.name = name;
 
         this.time.set(Calendar.HOUR_OF_DAY,hour);
@@ -57,7 +57,7 @@ public class Activity
         isDone();
     }
 
-    public Activity(String name, int hour, int min, String info) {
+    public SHELLActivity(String name, int hour, int min, String info) {
         this.name = name;
 
 
@@ -70,7 +70,7 @@ public class Activity
     }
 
 
-    public Activity(String name, int hour, int min, String info, double bloodSLevel, boolean done) {
+    public SHELLActivity(String name, int hour, int min, String info, double bloodSLevel, boolean done) {
         this.name = name;
 
         this.time.set(Calendar.HOUR_OF_DAY,hour);

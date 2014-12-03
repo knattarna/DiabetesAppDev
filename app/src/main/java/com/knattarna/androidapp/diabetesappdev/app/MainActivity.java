@@ -1,18 +1,17 @@
 package com.knattarna.androidapp.diabetesappdev.app;
 
 import android.app.AlarmManager;
-
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.FragmentTransaction;
 import android.app.ListFragment;
-
-import android.app.TimePickerDialog;
-
-import android.view.inputmethod.EditorInfo;
-import android.support.v7.app.ActionBarActivity;
-
 import android.app.Fragment;
+import android.app.TimePickerDialog;
+import android.app.FragmentManager;
+
+import android.provider.Settings;
+import android.support.v7.app.ActionBarActivity;
+import android.app.Activity;
 import android.os.Bundle;
 
 import android.text.format.DateFormat;
@@ -21,46 +20,45 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
-
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
+import android.widget.CheckBox;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-import java.util.zip.Inflater;
 
 import android.content.Intent;
 import android.content.Context;
-import android.widget.CheckBox;
 
 
-import org.apache.http.conn.ssl.AllowAllHostnameVerifier;
-
-import static android.widget.Toast.makeText;
 
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends Activity {
 
-    //tags for the fragments
-    private static final String TAG_DAY = "DAY";
+    private static FragmentManager fragMan = null;
 
     //this should later be the week object global to the scope
-    private static Day CURRENT_DAY      = new Day();
-    private static Activity CURRENT_ACT = new Activity();
+    private static Week CURRENT_WEEK    = new Week();
+    private static Day CURRENT_DAY      = null;
+    private static SHELLActivity CURRENT_ACT = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
+        this.fragMan = getFragmentManager();
+        this.CURRENT_DAY = this.CURRENT_WEEK.today();
 
         //if there is no previously saved instance of the app
         //add a fragment to the layout
@@ -69,7 +67,6 @@ public class MainActivity extends ActionBarActivity {
             DayFragment day = new DayFragment();
             getFragmentManager().beginTransaction().add(R.id.container, day).commit();
         }
-
     }
 
     @Override
@@ -128,18 +125,19 @@ public class MainActivity extends ActionBarActivity {
         private EditText description    = null;
         private EditText blood          = null;
 
+
         //get the alarm manager
         private AlarmManager ALARM = null;
         //the current activity only changes on save
         //private static Activity curr_act = null;
         //the temporal activity changes withing the activity fragment
-        private static Activity temp_act = null;
+        private SHELLActivity temp_act = null;
         //static final int TIME_DIALOG_ID = 0;
 
         public ActivityFragment() {
 
             //making a copy
-            this.temp_act = new Activity(
+            this.temp_act = new SHELLActivity(
                     CURRENT_ACT.getName(),
                     CURRENT_ACT.getHour(),
                     CURRENT_ACT.getMin(),
@@ -157,6 +155,7 @@ public class MainActivity extends ActionBarActivity {
                 description = (EditText) getActivity().findViewById(R.id.editText);
                 name        = (TextView) getActivity().findViewById(R.id.textViewName);
                 blood       = (EditText) getActivity().findViewById(R.id.editText2);
+
                 // Listener for events within the activity fragment
 
                 //set time
@@ -232,15 +231,7 @@ public class MainActivity extends ActionBarActivity {
                         }
 
                         //OMG i found the answer
-                        getFragmentManager().popBackStack();
-                        /*DayFragment day = new DayFragment();
-                        // Replace whatever is in the fragment_container view with this fragment,
-                        // and add the transaction to the back stack
-                        FragmentTransaction fragTrans = getFragmentManager().beginTransaction();
-                        fragTrans.replace(R.id.container,day);
-                        fragTrans.addToBackStack(null);
-                        // Commit the transaction
-                        fragTrans.commit();*/
+                        fragMan.popBackStack();
                     }
                 });
 
@@ -251,7 +242,7 @@ public class MainActivity extends ActionBarActivity {
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             View rootview = null;
-            rootview = (View) inflater.inflate(R.layout.activity_activity_window, container, false);
+            rootview = (View) inflater.inflate(R.layout.activity_window, container, false);
             return rootview;
         }
 
@@ -310,10 +301,11 @@ public class MainActivity extends ActionBarActivity {
      * =============================================================================================
      */
 
-    public static class DayFragment extends ListFragment {
-
+    public static class DayFragment extends Fragment {
 
         private ArrayList<String> activity_names = new ArrayList<String>(){};
+        private ListView act_list = null;
+        private TextView day_name = null;
 
         public DayFragment()
         {
@@ -328,26 +320,39 @@ public class MainActivity extends ActionBarActivity {
         @Override
         public void onActivityCreated(Bundle savedInstanceState) {
             super.onActivityCreated(savedInstanceState);
-            setListAdapter(new DayAdapter<String>(
+
+            act_list = (ListView) getActivity().findViewById(R.id.actList);
+            day_name = (TextView) getActivity().findViewById(R.id.dayName);
+
+
+            act_list.setAdapter(new DayAdapter<String>(
                     getActivity(),
-                    R.layout.list_item_meal,
-                    R.id.list_item_meal,
+                    R.layout.list_item_act,
+                    R.id.act_name,
                     activity_names));
+
+            day_name.setText(CURRENT_DAY.getDayOfTheWeek());
+            day_name.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    WeekFragment week = new WeekFragment();// Create new fragment and transaction
+                    // Replace whatever is in the fragment_container view with this fragment,
+                    // and add the transaction to the back stack
+                    FragmentTransaction fragTrans = fragMan.beginTransaction();
+                    fragTrans.replace(R.id.container, week);
+                    fragTrans.addToBackStack(null);
+                    // Commit the transaction
+                    fragTrans.commit();
+                }
+            });
         }
 
         @Override
-        public void onListItemClick(ListView l, View v, int position, long id) {
-
-            CURRENT_ACT = CURRENT_DAY.getDayActs().get(position);
-            ActivityFragment act = new ActivityFragment();// Create new fragment and transaction
-
-            // Replace whatever is in the fragment_container view with this fragment,
-            // and add the transaction to the back stack
-            FragmentTransaction fragTrans = getFragmentManager().beginTransaction();
-            fragTrans.replace(R.id.container, act, TAG_DAY);
-            fragTrans.addToBackStack(null);
-            // Commit the transaction
-            fragTrans.commit();
+        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+            View rootview = null;
+            rootview = (View) inflater.inflate(R.layout.day_window, container, false);
+            return rootview;
         }
     }
 
@@ -356,6 +361,7 @@ public class MainActivity extends ActionBarActivity {
     {
 
         private Context context = null;
+
         public DayAdapter(Context context, int resource, int textViewResourceId, List<String> objects)
         {
             super(context, resource, textViewResourceId, objects);
@@ -363,7 +369,7 @@ public class MainActivity extends ActionBarActivity {
         }
 
         @Override
-        public View getView(int position, View convertView, ViewGroup parent)
+        public View getView(final int position, View convertView, ViewGroup parent)
         {
            //return super.getView(position, convertView, parent); View row = convertView;
 
@@ -372,11 +378,11 @@ public class MainActivity extends ActionBarActivity {
            if(row==null)
            {
                LayoutInflater inflater = LayoutInflater.from(context);
-               row=inflater.inflate(R.layout.list_item_meal, parent, false);
+               row=inflater.inflate(R.layout.list_item_act, parent, false);
            }
 
-           TextView text = (TextView) row.findViewById(R.id.list_item_meal);
-           TextView time = (TextView) row.findViewById(R.id.list_item_time);
+           TextView text = (TextView) row.findViewById(R.id.act_name);
+           TextView time = (TextView) row.findViewById(R.id.act_time);
            CheckBox box = (CheckBox) row.findViewById(R.id.checkBoxMeal);
 
            text.setText(CURRENT_DAY.getDayActs().get(position).getName());
@@ -387,7 +393,111 @@ public class MainActivity extends ActionBarActivity {
 
             box.setChecked(CURRENT_DAY.getDayActs().get(position).getDone());
 
+            text.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    CURRENT_ACT = CURRENT_DAY.getDayActs().get(position);
+                    ActivityFragment act = new ActivityFragment();// Create new fragment and transaction
+                    // Replace whatever is in the fragment_container view with this fragment,
+                    // and add the transaction to the back stack
+                    FragmentTransaction fragTrans = fragMan.beginTransaction();
+                    fragTrans.replace(R.id.container, act);
+                    fragTrans.addToBackStack(null);
+                    // Commit the transaction
+                    fragTrans.commit();
+                }
+            });
+
            return  row;
+        }
+
+    }
+
+    /**
+     * the week window fragment
+     * =============================================================================================
+     */
+
+    public static class WeekFragment extends Fragment {
+
+        private ListView days           = null;
+        private TextView week_number    = null;
+
+        private ArrayList<String> day_names = new ArrayList<String>(){};
+
+        public WeekFragment()
+        {
+            super();
+            for ( int i = 0; i < CURRENT_WEEK.getDays().size(); ++i)
+            {
+                day_names.add(CURRENT_WEEK.getDays().get(i).getDayOfTheWeek());
+            }
+        }
+
+        @Override
+        public void onActivityCreated(Bundle savedInstanceState) {
+            super.onActivityCreated(savedInstanceState);
+
+
+            week_number = (TextView) getActivity().findViewById(R.id.weekNumber);
+            days        = (ListView) getActivity().findViewById(R.id.day_list);
+
+            Calendar cal = Calendar.getInstance();
+            week_number.setText(Integer.toString(cal.get(Calendar.WEEK_OF_YEAR)));
+
+            days.setAdapter(new WeekAdapter<String>(
+                    getActivity(),
+                    R.layout.list_item_act,
+                    R.id.act_name,
+                    day_names));
+        }
+
+        @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+            View rootview = null;
+            rootview = (View) inflater.inflate(R.layout.week_window, container, false);
+            return rootview;
+        }
+    }
+
+    //View editing within the rows of the DayFragment class is done via the ArrayAdapter getView method
+    public static class WeekAdapter<String> extends ArrayAdapter<String>
+    {
+
+        private Context context = null;
+        public WeekAdapter(Context context, int resource, int textViewResourceId, List<String> objects)
+        {
+            super(context, resource, textViewResourceId, objects);
+            this.context = context;
+        }
+
+        @Override
+        public View getView(final int position, View convertView, ViewGroup parent)
+        {
+            //return super.getView(position, convertView, parent); View row = convertView;
+
+            View row = convertView;
+
+            if(row==null)
+            {
+                LayoutInflater inflater = LayoutInflater.from(context);
+                row=inflater.inflate(R.layout.list_item_act, parent, false);
+            }
+
+            TextView text = (TextView) row.findViewById(R.id.act_name);
+
+            text.setText(CURRENT_WEEK.getDays().get(position).getDayOfTheWeek());
+
+            text.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    CURRENT_DAY = CURRENT_WEEK.getDays().get(position);
+                    fragMan.popBackStack();
+                }
+            });
+
+            return  row;
         }
     }
 }
