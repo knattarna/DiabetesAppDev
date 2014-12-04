@@ -10,7 +10,7 @@ import java.util.Calendar;
  * Created by Jacob on 2014-11-20.
  * Activity class med lite set och get funktioner för acitvity window
  */
-public class SHELLActivity
+public class SHELLActivity implements Comparable<SHELLActivity>
 {
 
     private double BloodSLevel;
@@ -26,15 +26,16 @@ public class SHELLActivity
 //Few constructors
 
     public SHELLActivity() {
-        this.name = "TesT";
+        this.name = "Ny Aktivitet";
 
         this.time.set(Calendar.HOUR_OF_DAY,13);
         this.time.set(Calendar.MINUTE,37);
 
-        this.info = null;
+        this.info = "";
         BloodSLevel = 0;
         isDone();
     }
+
     /*
     public Activity(Activity act)
     {
@@ -153,4 +154,8 @@ public class SHELLActivity
                                             intent,0);
     }
 
+    @Override
+    public int compareTo(SHELLActivity another) {
+        return (int) ((this.getTime().getTimeInMillis()) - (another.getTime().getTimeInMillis()));
+    }
 }

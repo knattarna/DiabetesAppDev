@@ -1,6 +1,7 @@
 package com.knattarna.androidapp.diabetesappdev.app;
 
 import android.app.AlarmManager;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.FragmentTransaction;
@@ -9,6 +10,7 @@ import android.app.Fragment;
 import android.app.TimePickerDialog;
 import android.app.FragmentManager;
 
+import android.content.DialogInterface;
 import android.provider.Settings;
 import android.support.v7.app.ActionBarActivity;
 import android.app.Activity;
@@ -156,7 +158,33 @@ public class MainActivity extends Activity {
                 name        = (TextView) getActivity().findViewById(R.id.textViewName);
                 blood       = (EditText) getActivity().findViewById(R.id.editText2);
 
+                update();
                 // Listener for events within the activity fragment
+                name.setOnClickListener(new View.OnClickListener() {
+
+                    final EditText edtext = new EditText(getActivity());
+
+                    @Override
+                    public void onClick(View v) {
+                        new AlertDialog.Builder(getActivity())
+                                .setTitle("Byt namn")
+                                .setView(edtext)
+                                .setPositiveButton("Ändra", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int whichButton) {
+                                        temp_act.setName(edtext.getText().toString());
+                                        update();
+                                    }
+                                })
+                                .setNegativeButton("Avbryt", new DialogInterface.OnClickListener(){
+                                    @Override
+                                public void onClick(DialogInterface dialogInterface, int whichButton) {
+                                        dialogInterface.cancel();
+                                    }
+                                })
+                                .show();
+                    }
+                });
 
                 //set time
                 displayTime.setOnClickListener(new View.OnClickListener() {
@@ -164,7 +192,7 @@ public class MainActivity extends Activity {
                     public void onClick(View v) {
                        TimeDialog dia = new TimeDialog();
                        dia.show(getFragmentManager(), "timePicker");
-                       updateDisplay();
+                       update();
                     }
                 });
 
@@ -231,12 +259,13 @@ public class MainActivity extends Activity {
                         }
 
                         //OMG i found the answer
+                        //if time has changed on a completed activity sort the day
+                        CURRENT_DAY.sortActs();
                         fragMan.popBackStack();
                     }
                 });
 
             }
-            updateDisplay();
         }
 
         @Override
@@ -249,7 +278,7 @@ public class MainActivity extends Activity {
         /**
          * Updates the time in the TextView
          */
-        private void updateDisplay() {
+        private void update() {
             displayTime.setText(
                     new StringBuilder()
                             .append(pad(temp_act.getHour())).append(":")
@@ -288,7 +317,7 @@ public class MainActivity extends Activity {
             public void onTimeSet(TimePicker view, int hourOfDay,int minute)
             {
                 temp_act.setTime(hourOfDay,minute);
-                ActivityFragment.this.updateDisplay();
+                ActivityFragment.this.update();
                 ActivityFragment.this.displayToast();
             }
 
@@ -305,16 +334,13 @@ public class MainActivity extends Activity {
 
         private ArrayList<String> activity_names = new ArrayList<String>() {
         };
-        private ListView act_list = null;
-        private Button ret_today = null;
-        private Button day_name = null;
+        private ListView act_list   = null;
+        private Button ret_today    = null;
+        private Button day_name     = null;
+        private Button add_act      = null;
 
         public DayFragment() {
             super();
-
-            for (int i = 0; i < CURRENT_DAY.getDayActs().size(); ++i) {
-                activity_names.add(CURRENT_DAY.getDayActs().get(i).getName());
-            }
         }
 
         @Override
@@ -344,13 +370,36 @@ public class MainActivity extends Activity {
                     DayFragment.this.update();
                 }
             });
+
+            add_act.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    CURRENT_ACT = new SHELLActivity();
+                    CURRENT_DAY.addActivity(CURRENT_ACT);
+
+                    update();
+
+                    ActivityFragment act = new ActivityFragment();
+                    FragmentTransaction fragTrans = fragMan.beginTransaction();
+                    fragTrans.replace(R.id.container,act);
+                    fragTrans.addToBackStack(null);
+                    fragTrans.commit();
+                }
+            });
         }
 
         public void update()
         {
-            act_list = (ListView) getActivity().findViewById(R.id.actList);
-            day_name = (Button) getActivity().findViewById(R.id.dayName);
-            ret_today = (Button) getActivity().findViewById(R.id.returnToday);
+            act_list    = (ListView) getActivity().findViewById(R.id.actList);
+            day_name    = (Button) getActivity().findViewById(R.id.dayName);
+            ret_today   = (Button) getActivity().findViewById(R.id.returnToday);
+            add_act     = (Button) getActivity().findViewById(R.id.addAct);
+
+            activity_names.clear();
+            CURRENT_DAY.sortActs();
+            for (int i = 0; i < CURRENT_DAY.getDayActs().size(); ++i) {
+                activity_names.add(CURRENT_DAY.getDayActs().get(i).getName());
+            }
 
             act_list.setAdapter(new DayAdapter<String>(
                     getActivity(),

@@ -3,6 +3,8 @@ package com.knattarna.androidapp.diabetesappdev.app;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Locale;
 
 /**
@@ -13,6 +15,7 @@ public class Day {
 
 
     private ArrayList<SHELLActivity> dayActs;
+
     private String date;
     private String dayOfTheWeek;
 
@@ -66,6 +69,7 @@ public class Day {
     public void addActivity(SHELLActivity act)
     {
         dayActs.add(act);
+        sortActs();
     }
 
     public void fillDay()
@@ -80,14 +84,21 @@ public class Day {
                     htemp = htemp + 2;
                 }
             }};
+
+        sortActs();
     }
 
     //updates every activity after this position with values dependent on this positions
     public void updateDay(int position, Calendar offset)
     {
-
         for(++position;position < dayActs.size();++position) {
             dayActs.get(position).setTime(offset);
         }
+        sortActs();
+    }
+
+    public void sortActs()
+    {
+        Collections.sort(dayActs);
     }
 }

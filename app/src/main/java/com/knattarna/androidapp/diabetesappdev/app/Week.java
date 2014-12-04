@@ -2,6 +2,7 @@ package com.knattarna.androidapp.diabetesappdev.app;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Locale;
 
 /**
  * Created by mrbent on 12/3/14.
@@ -36,7 +37,6 @@ public class Week {
 
     public void sync_days()
     {
-
     }
 
     public Day today() {return days.get(0);}
