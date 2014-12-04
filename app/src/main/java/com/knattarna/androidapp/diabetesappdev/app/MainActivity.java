@@ -303,16 +303,16 @@ public class MainActivity extends Activity {
 
     public static class DayFragment extends Fragment {
 
-        private ArrayList<String> activity_names = new ArrayList<String>(){};
+        private ArrayList<String> activity_names = new ArrayList<String>() {
+        };
         private ListView act_list = null;
-        private TextView day_name = null;
+        private Button ret_today = null;
+        private Button day_name = null;
 
-        public DayFragment()
-        {
+        public DayFragment() {
             super();
 
-            for(int i = 0; i < CURRENT_DAY.getDayActs().size(); ++i)
-            {
+            for (int i = 0; i < CURRENT_DAY.getDayActs().size(); ++i) {
                 activity_names.add(CURRENT_DAY.getDayActs().get(i).getName());
             }
         }
@@ -321,21 +321,11 @@ public class MainActivity extends Activity {
         public void onActivityCreated(Bundle savedInstanceState) {
             super.onActivityCreated(savedInstanceState);
 
-            act_list = (ListView) getActivity().findViewById(R.id.actList);
-            day_name = (TextView) getActivity().findViewById(R.id.dayName);
+            this.update();
 
-
-            act_list.setAdapter(new DayAdapter<String>(
-                    getActivity(),
-                    R.layout.list_item_act,
-                    R.id.act_name,
-                    activity_names));
-
-            day_name.setText(CURRENT_DAY.getDayOfTheWeek());
             day_name.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
                     WeekFragment week = new WeekFragment();// Create new fragment and transaction
                     // Replace whatever is in the fragment_container view with this fragment,
                     // and add the transaction to the back stack
@@ -346,6 +336,29 @@ public class MainActivity extends Activity {
                     fragTrans.commit();
                 }
             });
+
+            ret_today.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    CURRENT_DAY = CURRENT_WEEK.today();
+                    DayFragment.this.update();
+                }
+            });
+        }
+
+        public void update()
+        {
+            act_list = (ListView) getActivity().findViewById(R.id.actList);
+            day_name = (Button) getActivity().findViewById(R.id.dayName);
+            ret_today = (Button) getActivity().findViewById(R.id.returnToday);
+
+            act_list.setAdapter(new DayAdapter<String>(
+                    getActivity(),
+                    R.layout.list_item_act,
+                    R.id.act_name,
+                    activity_names));
+
+            day_name.setText(CURRENT_DAY.getDayOfTheWeek());
         }
 
         @Override
@@ -448,8 +461,8 @@ public class MainActivity extends Activity {
 
             days.setAdapter(new WeekAdapter<String>(
                     getActivity(),
-                    R.layout.list_item_act,
-                    R.id.act_name,
+                    R.layout.list_item_day,
+                    R.id.day_name,
                     day_names));
         }
 
@@ -482,10 +495,10 @@ public class MainActivity extends Activity {
             if(row==null)
             {
                 LayoutInflater inflater = LayoutInflater.from(context);
-                row=inflater.inflate(R.layout.list_item_act, parent, false);
+                row=inflater.inflate(R.layout.list_item_day, parent, false);
             }
 
-            TextView text = (TextView) row.findViewById(R.id.act_name);
+            TextView text = (TextView) row.findViewById(R.id.day_name);
 
             text.setText(CURRENT_WEEK.getDays().get(position).getDayOfTheWeek());
 

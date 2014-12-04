@@ -1,23 +1,53 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
 
-    android:background="#ffaadd"
+    android:background="#000000"
     tools:context=".MainActivity$DayFragment">
 
-    <TextView
+    <LinearLayout
+        android:id="@+id/top_bar"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:textColor="#ffffff"
-        android:id="@+id/dayName"
-        android:textSize= "50sp"/>
+        android:layout_alignParentTop="true"
+        android:background="#333333">
+
+        <Button
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:textColor="#ffffff"
+            android:background="#ffaadd"
+            android:id="@+id/dayName"
+            android:textSize= "40sp"/>
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/bottom_bar"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+
+        android:background="#333333">
+
+        <Button
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:textColor="#ffffff"
+            android:background="#ffaadd"
+            android:id="@+id/returnToday"
+            android:text="Tillbaka till idag"
+            />
+    </LinearLayout>
+
 
     <ListView
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_below="@+id/dayName"
         android:id="@+id/actList"
-    />
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/top_bar"
+        android:layout_above="@id/bottom_bar" >
+    </ListView>
 
 </RelativeLayout>

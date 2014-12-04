@@ -24,11 +24,26 @@ public class Day {
         add("Mellanmål");
         add("Dinner");
         add("Kvällsmål");
+        add("Bajsa");
+        add("Spela WoW");
+        add("Sova");
+        add("Vakna");
+        add("Spela WoW");
     }};
 
     public Day() {
 
-        final Calendar cal = Calendar.getInstance();
+        Calendar cal = Calendar.getInstance();
+        date = cal.getDisplayName(Calendar.DAY_OF_MONTH, Calendar.SHORT, Locale.US);
+        dayOfTheWeek = cal.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, Locale.US);
+
+        //fill day with standard activities
+        fillDay();
+    }
+
+    //create days from a set calendar
+    public Day(Calendar cal)
+    {
         date = cal.getDisplayName(Calendar.DAY_OF_MONTH, Calendar.SHORT, Locale.US);
         dayOfTheWeek = cal.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, Locale.US);
 
