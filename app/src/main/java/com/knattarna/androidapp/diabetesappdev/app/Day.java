@@ -11,7 +11,8 @@ import java.util.Locale;
  * Created by Jacob on 2014-11-21.
  * Class with members for the MainActivity Window.
  */
-public class Day {
+public class Day
+{
 
 
     private ArrayList<SHELLActivity> dayActs;
@@ -25,13 +26,9 @@ public class Day {
         add("Mellanmål");
         add("Lunch");
         add("Mellanmål");
-        add("Dinner");
-        add("Kvällsmål");
-        add("Bajsa");
-        add("Spela WoW");
-        add("Sova");
-        add("Vakna");
-        add("Spela WoW");
+        add("Middag");
+        add("Kvällsmål");;
+
     }};
 
     public Day() {
@@ -39,7 +36,6 @@ public class Day {
         Calendar cal = Calendar.getInstance();
         date = cal.getDisplayName(Calendar.DAY_OF_MONTH, Calendar.SHORT, Locale.US);
         dayOfTheWeek = cal.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, Locale.US);
-
         //fill day with standard activities
         fillDay();
     }
@@ -82,6 +78,8 @@ public class Day {
                     SHELLActivity temp = new SHELLActivity(ACTIVITIES.get(i), htemp, 0);
                     add(temp);
                     htemp = htemp + 2;
+                    if(htemp >= 22)
+                        break;
                 }
             }};
 
@@ -93,6 +91,11 @@ public class Day {
     {
         for(++position;position < dayActs.size();++position) {
             dayActs.get(position).setTime(offset);
+            //does not work
+            if(dayActs.get(position).getTime().getDisplayName(Calendar.DAY_OF_YEAR,Calendar.SHORT,Locale.US) != getDate()  )
+            {
+                dayActs.remove(position);
+            }
         }
         sortActs();
     }
@@ -101,4 +104,5 @@ public class Day {
     {
         Collections.sort(dayActs);
     }
+
 }

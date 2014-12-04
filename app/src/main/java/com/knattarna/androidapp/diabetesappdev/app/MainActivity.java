@@ -96,8 +96,7 @@ public class MainActivity extends Activity {
     @Override
     public void onBackPressed()
     {
-        //this works buuut normal behaviour isn't there
-        getFragmentManager().popBackStack();
+        super.onBackPressed();
     }
 
 
@@ -127,24 +126,23 @@ public class MainActivity extends Activity {
         private EditText description    = null;
         private EditText blood          = null;
 
-
-        //get the alarm manager
-        private AlarmManager ALARM = null;
         //the current activity only changes on save
         //private static Activity curr_act = null;
         //the temporal activity changes withing the activity fragment
         private SHELLActivity temp_act = null;
         //static final int TIME_DIALOG_ID = 0;
 
+
         public ActivityFragment() {
 
-            //making a copy
+                //making a copy
             this.temp_act = new SHELLActivity(
                     CURRENT_ACT.getName(),
                     CURRENT_ACT.getHour(),
                     CURRENT_ACT.getMin(),
                     CURRENT_ACT.getInfo(),
-                    CURRENT_ACT.getBloodSLevel(),false);
+                    CURRENT_ACT.getBloodSLevel(), false);
+
         }
 
         @Override
@@ -238,26 +236,19 @@ public class MainActivity extends Activity {
                         offset.set(Calendar.MINUTE, (temp_act.getMin() - CURRENT_ACT.getTime().get(Calendar.MINUTE)));
 
                         //java is weird cannot do CURRENT_ACT = temp_act
+
                         CURRENT_ACT.setInfo(temp_act.getInfo());
                         CURRENT_ACT.setName(temp_act.getName());
-                        CURRENT_ACT.setTime(temp_act.getHour(),temp_act.getMin());
+                        CURRENT_ACT.setTime(temp_act.getHour(), temp_act.getMin());
                         CURRENT_ACT.setBloodSLevel(temp_act.getBloodSLevel());
 
-
-                        //reset an alarm for this activity (should identify the same PendingIntent
-                        ALARM = (AlarmManager) getActivity().getSystemService(Context.ALARM_SERVICE);
-
-                        CURRENT_ACT.setAlarmIntent(getActivity().getBaseContext(),new Intent(getActivity(),AlarmReceiver.class));
-
-                        ALARM.set(AlarmManager.RTC_WAKEUP, CURRENT_ACT.getTime().getTimeInMillis(),
-                                CURRENT_ACT.getAlarmIntent());
 
 
                         //only update if act is not done and time has changed value
                         if( !temp_act.getDone() && !test) {
                             CURRENT_DAY.updateDay(CURRENT_DAY.getDayActs().indexOf(CURRENT_ACT), offset);
                         }
-
+                        //reset all alarms of today
                         //OMG i found the answer
                         //if time has changed on a completed activity sort the day
                         CURRENT_DAY.sortActs();
@@ -286,6 +277,7 @@ public class MainActivity extends Activity {
             description.setText(temp_act.getInfo());
             name.setText(temp_act.getName());
             blood.setText((String.valueOf(temp_act.getBloodSLevel())));
+            CURRENT_ACT.isDone();
         }
 
         /**
@@ -332,8 +324,11 @@ public class MainActivity extends Activity {
 
     public static class DayFragment extends Fragment {
 
-        private ArrayList<String> activity_names = new ArrayList<String>() {
-        };
+        private ArrayList<String> activity_names = new ArrayList<String>() {};
+
+        //get the alarm manager
+        private AlarmManager ALARM = null;
+
         private ListView act_list   = null;
         private Button ret_today    = null;
         private Button day_name     = null;
@@ -347,7 +342,7 @@ public class MainActivity extends Activity {
         public void onActivityCreated(Bundle savedInstanceState) {
             super.onActivityCreated(savedInstanceState);
 
-            this.update();
+            update();
 
             day_name.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -367,16 +362,16 @@ public class MainActivity extends Activity {
                 @Override
                 public void onClick(View v) {
                     CURRENT_DAY = CURRENT_WEEK.today();
-                    DayFragment.this.update();
+                    update();
                 }
             });
 
             add_act.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+
                     CURRENT_ACT = new SHELLActivity();
                     CURRENT_DAY.addActivity(CURRENT_ACT);
-
                     update();
 
                     ActivityFragment act = new ActivityFragment();
@@ -398,7 +393,10 @@ public class MainActivity extends Activity {
             activity_names.clear();
             CURRENT_DAY.sortActs();
             for (int i = 0; i < CURRENT_DAY.getDayActs().size(); ++i) {
+                //re add the sorted names the the list
                 activity_names.add(CURRENT_DAY.getDayActs().get(i).getName());
+                //update the activities to see if they are completed
+                CURRENT_DAY.getDayActs().get(i).isDone();
             }
 
             act_list.setAdapter(new DayAdapter<String>(
@@ -408,6 +406,8 @@ public class MainActivity extends Activity {
                     activity_names));
 
             day_name.setText(CURRENT_DAY.getDayOfTheWeek());
+            setAlarms();
+
         }
 
         @Override
@@ -415,6 +415,30 @@ public class MainActivity extends Activity {
             View rootview = null;
             rootview = (View) inflater.inflate(R.layout.day_window, container, false);
             return rootview;
+        }
+
+        private void setAlarms()
+        {
+            for(int i = 0; i < CURRENT_DAY.getDayActs().size(); ++i) {
+
+                SHELLActivity temp_act = CURRENT_DAY.getDayActs().get(i);
+
+                if(temp_act.getDone())
+                    continue;
+
+                ALARM = (AlarmManager) getActivity().getSystemService(Context.ALARM_SERVICE);
+
+                Intent alarmIntent = new Intent(getActivity(), AlarmReceiver.class);
+
+                alarmIntent.putExtra("Title", temp_act.getName());
+                alarmIntent.putExtra("Info", temp_act.getInfo());
+                alarmIntent.putExtra("Time", temp_act.getTime());
+
+                temp_act.setAlarmIntent(getActivity(), alarmIntent);
+
+                ALARM.set(AlarmManager.RTC_WAKEUP, temp_act.getTime().getTimeInMillis(),
+                        temp_act.getAlarmIntent());
+            }
         }
     }
 

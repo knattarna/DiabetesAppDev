@@ -7,7 +7,8 @@ import java.util.Locale;
 /**
  * Created by mrbent on 12/3/14.
  */
-public class Week {
+public class Week
+{
 
     private ArrayList<Day> days = new ArrayList<Day>();
     private String week_number = null;

@@ -28,8 +28,8 @@ public class SHELLActivity implements Comparable<SHELLActivity>
     public SHELLActivity() {
         this.name = "Ny Aktivitet";
 
-        this.time.set(Calendar.HOUR_OF_DAY,13);
-        this.time.set(Calendar.MINUTE,37);
+        this.time.set(Calendar.HOUR_OF_DAY,23);
+        this.time.set(Calendar.MINUTE,59);
 
         this.info = "";
         BloodSLevel = 0;
