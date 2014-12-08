@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.Context;
 
 import java.util.Calendar;
+import java.util.Date;
 
 /**
  * Created by Jacob on 2014-11-20.
@@ -17,7 +18,7 @@ public class SHELLActivity implements Comparable<SHELLActivity>
     private boolean done;
 
     private String name         = null;
-    private Calendar time       = Calendar.getInstance();
+    private Calendar time       = null;
     private String info         = null;
 
     //every activity holds a unique Intent that controls alarm on/off and reschedules etc
@@ -28,54 +29,43 @@ public class SHELLActivity implements Comparable<SHELLActivity>
     public SHELLActivity() {
         this.name = "Ny Aktivitet";
 
+        if(time == null)
+            time = Calendar.getInstance();
+
         this.time.set(Calendar.HOUR_OF_DAY,23);
         this.time.set(Calendar.MINUTE,59);
 
         this.info = "";
         BloodSLevel = 0;
+
         isDone();
     }
 
-    /*
-    public Activity(Activity act)
-    {
-        this.name = act.getName();
-        this.hour = act.getHour();
-        this.min = act.getMin();
-        this.info = act.getInfo();
-        this.BloodSLevel = act.getBloodSLevel();
-        this.done = act.isDone();
-    }*/
-
-    public SHELLActivity(String name, int hour, int min) {
+    public SHELLActivity(String name, int hour, int min, int day) {
         this.name = name;
+
+        if(time == null)
+            time = Calendar.getInstance();
 
         this.time.set(Calendar.HOUR_OF_DAY,hour);
         this.time.set(Calendar.MINUTE,min);
+        this.time.set(Calendar.DAY_OF_YEAR,day);
 
         this.info = null;
         BloodSLevel = 0;
+
         isDone();
     }
 
-    public SHELLActivity(String name, int hour, int min, String info) {
+    public SHELLActivity(String name, int hour, int min, String info, double bloodSLevel, int day, boolean done) {
         this.name = name;
 
+        if(time == null)
+            time = Calendar.getInstance();
 
         this.time.set(Calendar.HOUR_OF_DAY,hour);
         this.time.set(Calendar.MINUTE,min);
-
-        this.info = info;
-        BloodSLevel = Double.parseDouble(null);
-        isDone();
-    }
-
-
-    public SHELLActivity(String name, int hour, int min, String info, double bloodSLevel, boolean done) {
-        this.name = name;
-
-        this.time.set(Calendar.HOUR_OF_DAY,hour);
-        this.time.set(Calendar.MINUTE,min);
+        this.time.set(Calendar.DAY_OF_YEAR,day);
 
         this.info = info;
         BloodSLevel = bloodSLevel;
@@ -110,6 +100,8 @@ public class SHELLActivity implements Comparable<SHELLActivity>
         return done;
     }
 
+    public int getDay() { return this.time.get(Calendar.DAY_OF_YEAR); }
+
     public PendingIntent getAlarmIntent() { return alarmIntent; }
 
     //set functions
@@ -142,7 +134,13 @@ public class SHELLActivity implements Comparable<SHELLActivity>
 
     public void isDone()
     {
-        this.done = this.time.getTimeInMillis() < System.currentTimeMillis();
+        Calendar tmpCal = Calendar.getInstance();
+
+        if(this.time.get(Calendar.DAY_OF_YEAR) == tmpCal.get(Calendar.DAY_OF_YEAR))
+            this.done = this.time.getTimeInMillis() < tmpCal.getTimeInMillis();
+        else
+            this.done = this.time.get(Calendar.DAY_OF_YEAR) < tmpCal.get(Calendar.DAY_OF_YEAR);
+
     }
 
 

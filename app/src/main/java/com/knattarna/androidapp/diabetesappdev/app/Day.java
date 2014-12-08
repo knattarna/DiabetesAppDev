@@ -19,6 +19,7 @@ public class Day
 
     private String date;
     private String dayOfTheWeek;
+    private Calendar day = null;
 
     private final ArrayList<String> ACTIVITIES = new ArrayList<String>() {
     {
@@ -33,9 +34,11 @@ public class Day
 
     public Day() {
 
-        Calendar cal = Calendar.getInstance();
-        date = cal.getDisplayName(Calendar.DAY_OF_MONTH, Calendar.SHORT, Locale.US);
-        dayOfTheWeek = cal.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, Locale.US);
+        if(day == null)
+            day = Calendar.getInstance();
+
+        date = day.getDisplayName(Calendar.DAY_OF_MONTH, Calendar.SHORT, Locale.US);
+        dayOfTheWeek = day.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, Locale.US);
         //fill day with standard activities
         fillDay();
     }
@@ -43,8 +46,10 @@ public class Day
     //create days from a set calendar
     public Day(Calendar cal)
     {
-        date = cal.getDisplayName(Calendar.DAY_OF_MONTH, Calendar.SHORT, Locale.US);
-        dayOfTheWeek = cal.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, Locale.US);
+
+        day = cal;
+        date = day.getDisplayName(Calendar.DAY_OF_MONTH, Calendar.SHORT, Locale.US);
+        dayOfTheWeek = day.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, Locale.US);
 
         //fill day with standard activities
         fillDay();
@@ -75,7 +80,7 @@ public class Day
             {
                 int htemp = 8;
                 for(int i = 0; i < ACTIVITIES.size(); ++i){
-                    SHELLActivity temp = new SHELLActivity(ACTIVITIES.get(i), htemp, 0);
+                    SHELLActivity temp = new SHELLActivity(ACTIVITIES.get(i), htemp, 0, day.get(Calendar.DAY_OF_YEAR));
                     add(temp);
                     htemp = htemp + 2;
                     if(htemp >= 22)

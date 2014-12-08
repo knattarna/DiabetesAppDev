@@ -141,7 +141,9 @@ public class MainActivity extends Activity {
                     CURRENT_ACT.getHour(),
                     CURRENT_ACT.getMin(),
                     CURRENT_ACT.getInfo(),
-                    CURRENT_ACT.getBloodSLevel(), false);
+                    CURRENT_ACT.getBloodSLevel(),
+                    CURRENT_ACT.getDay(),
+                    false);
 
         }
 

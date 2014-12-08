@@ -25,13 +25,14 @@ public class Week
         //there is no data in database
         //create new Days
 
-        Calendar cal = Calendar.getInstance();
-        cal.setFirstDayOfWeek(cal.MONDAY);
+        //Calendar cal = Calendar.getInstance();
 
         for(int i = 0; i < 7; ++i)
         {
-            days.add(new Day(cal));
-            cal.set(Calendar.DAY_OF_WEEK,i);
+            Calendar tmpCal = Calendar.getInstance();
+            tmpCal.set(Calendar.DAY_OF_YEAR, tmpCal.get(Calendar.DAY_OF_YEAR)+i);
+            //cal.set(Calendar.DAY_OF_WEEK, cal.get(Calendar.DAY_OF_WEEK)+1);
+            days.add(new Day(tmpCal));
         }
 
     }
