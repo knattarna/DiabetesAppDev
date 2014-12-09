@@ -1,6 +1,7 @@
 package com.knattarna.androidapp.diabetesappdev.app;
 
 import android.app.Notification;
+
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 
@@ -41,7 +42,7 @@ public class AlarmReceiver extends BroadcastReceiver {
                 (NotificationManager) k1.getSystemService(Context.NOTIFICATION_SERVICE);
 
         Notification notification = new Notification.Builder(k1)
-                                    .setContentTitle(title)
+                                    .setContentTitle((title+" "+cal.get(Calendar.HOUR_OF_DAY)+":"+cal.get(Calendar.MINUTE)))
                                     .setContentText(info)
                                     .setSmallIcon(R.drawable.icon)
                                     .setContentIntent(pIntent)

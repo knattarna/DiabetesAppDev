@@ -56,9 +56,14 @@
         android:maxLength="2"
         android:hint="Mata in blodsockernivå..."
         android:imeOptions="actionDone"
+<<<<<<< HEAD
         android:background="@android:drawable/editbox_background_normal"
         android:visibility="gone"
         />
+=======
+        android:visibility="gone"
+    />
+>>>>>>> 00607936b4a9d0dd31205befa2f92dba4495793c
 
     <Button
         android:layout_width="fill_parent"

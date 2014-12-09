@@ -5,17 +5,17 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.FragmentTransaction;
-import android.app.ListFragment;
+
 import android.app.Fragment;
 import android.app.TimePickerDialog;
 import android.app.FragmentManager;
 
 import android.content.DialogInterface;
-import android.provider.Settings;
-import android.support.v7.app.ActionBarActivity;
+
 import android.app.Activity;
 import android.os.Bundle;
 
+import android.text.Layout;
 import android.text.format.DateFormat;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -40,9 +40,6 @@ import java.util.List;
 
 import android.content.Intent;
 import android.content.Context;
-
-
-
 
 public class MainActivity extends Activity {
 
@@ -162,9 +159,8 @@ public class MainActivity extends Activity {
                 // Listener for events within the activity fragment
                 name.setOnClickListener(new View.OnClickListener() {
 
-                    final EditText edtext = new EditText(getActivity());
+                    final EditText edtext = (EditText) getActivity().getLayoutInflater().inflate(R.layout.edit_text_dialog,null);
 
-                    @Override
                     public void onClick(View v) {
                         new AlertDialog.Builder(getActivity())
                                 .setTitle("Byt namn")
@@ -227,6 +223,10 @@ public class MainActivity extends Activity {
                 saveAct.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+
+                        //add activity
+                        if (!CURRENT_DAY.getDayActs().contains(CURRENT_ACT))
+                            CURRENT_DAY.addActivity(CURRENT_ACT);
 
                         //have we changed the time of the object ?
                         Boolean test = (CURRENT_ACT.getHour() == temp_act.getHour()) && (CURRENT_ACT.getMin() == temp_act.getMin());
@@ -373,7 +373,6 @@ public class MainActivity extends Activity {
                 public void onClick(View v) {
 
                     CURRENT_ACT = new SHELLActivity();
-                    CURRENT_DAY.addActivity(CURRENT_ACT);
                     update();
 
                     ActivityFragment act = new ActivityFragment();
