@@ -225,7 +225,7 @@ public class MainActivity extends Activity {
                     public void onClick(View v) {
 
                         //add activity
-                        if (CURRENT_DAY.getDayActs().indexOf(CURRENT_DAY) < 0)
+                        if (!CURRENT_DAY.getDayActs().contains(CURRENT_ACT))
                             CURRENT_DAY.addActivity(CURRENT_ACT);
 
                         //have we changed the time of the object ?
