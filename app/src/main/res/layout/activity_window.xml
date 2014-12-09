@@ -50,6 +50,7 @@
         android:maxLength="2"
         android:hint="Mata in blodsockernivå..."
         android:imeOptions="actionDone"
+        android:visibility="gone"
     />
 
     <Button

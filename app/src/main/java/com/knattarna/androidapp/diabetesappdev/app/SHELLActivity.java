@@ -118,6 +118,10 @@ public class SHELLActivity implements Comparable<SHELLActivity>
 
     public void setTime(int hour, int min)
     {
+        //cannot change time on passed events
+        if (getDone())
+            return;
+
         this.time.set(Calendar.HOUR_OF_DAY,hour);
         this.time.set(Calendar.MINUTE,min);
 
@@ -126,7 +130,6 @@ public class SHELLActivity implements Comparable<SHELLActivity>
 
     public void setTime(Calendar offset)
     {
-
         int hour = getHour()+offset.get(Calendar.HOUR_OF_DAY);
         int min = getMin()+offset.get(Calendar.MINUTE);
         this.setTime(hour,min);

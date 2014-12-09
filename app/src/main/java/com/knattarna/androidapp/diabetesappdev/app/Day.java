@@ -79,12 +79,14 @@ public class Day
         dayActs = new ArrayList<SHELLActivity>() {
             {
                 int htemp = 8;
+
                 for(int i = 0; i < ACTIVITIES.size(); ++i){
+                    if(htemp >= 24)
+                        break;
+
                     SHELLActivity temp = new SHELLActivity(ACTIVITIES.get(i), htemp, 0, day.get(Calendar.DAY_OF_YEAR));
                     add(temp);
                     htemp = htemp + 2;
-                    if(htemp >= 22)
-                        break;
                 }
             }};
 
@@ -97,7 +99,7 @@ public class Day
         for(++position;position < dayActs.size();++position) {
             dayActs.get(position).setTime(offset);
             //does not work
-            if(dayActs.get(position).getTime().getDisplayName(Calendar.DAY_OF_YEAR,Calendar.SHORT,Locale.US) != getDate()  )
+            if(dayActs.get(position).getTime().get(Calendar.DAY_OF_YEAR) != day.get(Calendar.DAY_OF_YEAR))
             {
                 dayActs.remove(position);
             }
