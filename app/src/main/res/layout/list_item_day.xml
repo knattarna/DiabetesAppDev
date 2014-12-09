@@ -13,6 +13,7 @@
         android:layout_height="fill_parent"
         android:textSize="30sp"
         android:gravity="center"
+        style="@style/shadowed_text"
      />
 
 </RelativeLayout>

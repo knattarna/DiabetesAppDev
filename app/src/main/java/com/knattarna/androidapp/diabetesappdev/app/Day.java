@@ -28,7 +28,7 @@ public class Day
         add("Lunch");
         add("Mellanmål");
         add("Middag");
-        add("Kvällsmål");;
+        add("Kvällsmål");
 
     }};
 

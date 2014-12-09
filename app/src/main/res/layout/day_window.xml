@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
 
-    android:background="#000000"
+    android:background="#ffffff"
     tools:context=".MainActivity$DayFragment">
 
     <LinearLayout
@@ -18,10 +18,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="#ffffff"
-            android:background="#ffaadd"
+            android:background="@android:color/darker_gray"
             android:id="@+id/dayName"
             android:textSize= "40sp"
-            android:layout_weight="0.90" />
+            android:layout_weight="0.90"
+            style="@style/shadowed_text"/>
 
         <Button
             android:layout_width="wrap_content"
@@ -29,10 +30,11 @@
             android:textColor="#ffffff"
             android:text="+"
             android:layout_gravity="center"
-            android:background="#ff0add"
+            android:background="#000000"
             android:id="@+id/addAct"
             android:textSize= "40sp"
-            android:layout_weight="0.1" />
+            android:layout_weight="0.1"
+            style="@style/add_new_activity"/>
     </LinearLayout>
 
 
@@ -48,9 +50,10 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:textColor="#ffffff"
-            android:background="#ffaadd"
+            android:background="@android:color/darker_gray"
             android:id="@+id/returnToday"
             android:text="Tillbaka till idag"
+            style="@style/return_to_current_day"
             />
     </LinearLayout>
 

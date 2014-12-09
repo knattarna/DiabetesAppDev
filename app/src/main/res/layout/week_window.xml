@@ -17,7 +17,8 @@
             android:gravity="center"
             android:textColor="#ffffff"
             android:id="@+id/weekNumber"
-            android:textSize= "30sp"/>
+            android:textSize= "30sp"
+            style="@style/shadowed_text"/>
 
     </LinearLayout>
 
@@ -26,6 +27,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/day_list"
-        android:layout_below="@+id/top_bar" />
+        android:layout_below="@+id/top_bar"
+        style="@style/shadowed_text"/>
 
 </RelativeLayout>
