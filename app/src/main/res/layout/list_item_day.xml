@@ -6,16 +6,30 @@
     android:descendantFocusability="blocksDescendants"
     >
 
+<LinearLayout
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:weightSum="1">
 
     <TextView
         android:id="@+id/day_name"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:textSize="30sp"
-        android:gravity="center"
-        style="@style/shadowed_text"
+        android:gravity="center_vertical"
+        android:layout_marginStart="2sp"
+        android:layout_marginLeft="10sp"
+        android:layout_weight="0.3"
      />
 
-
+    <TextView
+        android:id="@+id/day_date"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:textSize="30sp"
+        android:gravity="center"
+        android:layout_weight="0.7"
+        />
+</LinearLayout>
 
 </RelativeLayout>

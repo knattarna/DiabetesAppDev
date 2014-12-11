@@ -17,6 +17,8 @@
         android:layout_toLeftOf="@+id/act_time"
         android:layout_toStartOf="@+id/act_time"
         android:layout_alignBottom="@+id/checkBoxMeal"
+        android:layout_marginStart="2sp"
+        android:layout_marginLeft="10sp"
         />
 
     <TextView

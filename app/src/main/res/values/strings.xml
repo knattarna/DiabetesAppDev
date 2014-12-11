@@ -7,4 +7,8 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_activity_window">Edit Activity</string>
     <string name="description_activity_window"><i>Description ...</i></string>
+    <string name="save_button">SAVE</string>
+    <string name="return_to_day_window">Return to today</string>
+    <string name="add_activity">+</string>
+
 </resources>

@@ -32,9 +32,15 @@ public class SHELLActivity implements Comparable<SHELLActivity>
         if(time == null)
             time = Calendar.getInstance();
 
+        Calendar tmpCal = Calendar.getInstance();
+
+      /* TODO There's a bug in here somewhere
+        this.time.set(Calendar.HOUR_OF_DAY,tmpCal.get(Calendar.HOUR_OF_DAY));
+        this.time.set(Calendar.MINUTE,tmpCal.get(Calendar.MINUTE));
+        */
+
         this.time.set(Calendar.HOUR_OF_DAY,23);
         this.time.set(Calendar.MINUTE,59);
-
         this.info = "";
         BloodSLevel = 0;
 

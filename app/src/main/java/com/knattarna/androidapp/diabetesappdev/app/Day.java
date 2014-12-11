@@ -23,12 +23,12 @@ public class Day
 
     private final ArrayList<String> ACTIVITIES = new ArrayList<String>() {
     {
-        add("Frukost");
-        add("Mellanmål");
+        add("Breakfast");
+        add("Snack");
         add("Lunch");
-        add("Mellanmål");
-        add("Middag");
-        add("Kvällsmål");
+        add("Snack");
+        add("Dinner");
+        add("Snack");
 
     }};
 

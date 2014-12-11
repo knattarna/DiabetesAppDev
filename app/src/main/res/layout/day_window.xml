@@ -28,7 +28,7 @@
             android:layout_width="wrap_content"
             android:layout_height="fill_parent"
             android:textColor="#ffffff"
-            android:text="+"
+            android:text="@string/add_activity"
             android:layout_gravity="center"
             android:background="#000000"
             android:id="@+id/addAct"
@@ -52,7 +52,7 @@
             android:textColor="#ffffff"
             android:background="@android:color/darker_gray"
             android:id="@+id/returnToday"
-            android:text="Tillbaka till idag"
+            android:text="@string/return_to_day_window"
             style="@style/return_to_current_day"
             />
     </LinearLayout>

@@ -163,16 +163,16 @@ public class MainActivity extends Activity {
 
                     public void onClick(View v) {
                         new AlertDialog.Builder(getActivity())
-                                .setTitle("Byt namn")
+                                .setTitle("Rename")
                                 .setView(edtext)
-                                .setPositiveButton("Ändra", new DialogInterface.OnClickListener() {
+                                .setPositiveButton("Apply", new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialogInterface, int whichButton) {
                                         temp_act.setName(edtext.getText().toString());
                                         update();
                                     }
                                 })
-                                .setNegativeButton("Avbryt", new DialogInterface.OnClickListener(){
+                                .setNegativeButton("Cancel", new DialogInterface.OnClickListener(){
                                     @Override
                                 public void onClick(DialogInterface dialogInterface, int whichButton) {
                                         dialogInterface.cancel();
@@ -286,7 +286,7 @@ public class MainActivity extends Activity {
          * Displays a notification when the time is updated
          */
         private void displayToast() {
-            Toast.makeText(getActivity(), new StringBuilder().append("Time choosen is ").append(displayTime.getText()), Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), new StringBuilder().append("Time set to ").append(displayTime.getText()), Toast.LENGTH_SHORT).show();
 
         }
 
@@ -566,15 +566,17 @@ public class MainActivity extends Activity {
 
             View row = convertView;
 
-            if(row==null)
+            if(row == null)
             {
                 LayoutInflater inflater = LayoutInflater.from(context);
                 row=inflater.inflate(R.layout.list_item_day, parent, false);
             }
 
             TextView text = (TextView) row.findViewById(R.id.day_name);
+            TextView date = (TextView) row.findViewById(R.id.day_date);
 
             text.setText(CURRENT_WEEK.getDays().get(position).getDayOfTheWeek());
+            date.setText(CURRENT_WEEK.getDays().get(position).getDate());
 
             text.setOnClickListener(new View.OnClickListener() {
                 @Override
