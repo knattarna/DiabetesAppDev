@@ -27,21 +27,22 @@
         android:layout_below="@+id/textViewName"
         android:gravity="center_vertical|center_horizontal"
         android:id="@+id/textViewTimeDisplay"
-        android:textSize= "65dp"
+        android:textSize= "65sp"
         android:background="@android:drawable/editbox_background_normal"
      />
+
 
     <EditText
 
         android:layout_width="fill_parent"
-        android:layout_height="50dp"
+        android:layout_height="100dp"
         android:layout_below="@+id/textViewTimeDisplay"
+        android:layout_marginTop="20sp"
         android:id="@+id/editText"
         android:hint="@string/description_activity_window"
         android:imeOptions="actionNext"
         android:inputType="textAutoCorrect"
-        android:singleLine="true"
-        android:maxLength="25"
+        android:maxLength="50"
         android:autoText="false"
         android:background="@android:drawable/editbox_background_normal" />
 
