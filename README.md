@@ -1,8 +1,8 @@
 DiabetesAppDev
-==============
+=================
 
-An Android App developed in a project course at Linköping University, autumn 2014.
+An Android App developed for a project course at Linköping University, autumn 2014.
 
-=============
+=================
 
-Created in Android Studio 1.0 RC
+Created in Android Studio 1.0
