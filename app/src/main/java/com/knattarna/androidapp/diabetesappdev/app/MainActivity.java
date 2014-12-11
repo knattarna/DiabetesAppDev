@@ -122,6 +122,7 @@ public class MainActivity extends Activity {
         private TextView name           = null;
         private EditText description    = null;
         private EditText blood          = null;
+        private Button cancelAct        = null;
 
         //the current activity only changes on save
         //private static Activity curr_act = null;
@@ -150,10 +151,13 @@ public class MainActivity extends Activity {
                 super.onActivityCreated(savedInstanceState);
 
                 saveAct     = (Button)   getActivity().findViewById(R.id.buttonSave);
+                cancelAct   = (Button)   getActivity().findViewById(R.id.buttonCancel);
                 displayTime = (TextView) getActivity().findViewById(R.id.textViewTimeDisplay);
                 description = (EditText) getActivity().findViewById(R.id.editText);
                 name        = (TextView) getActivity().findViewById(R.id.textViewName);
                 blood       = (EditText) getActivity().findViewById(R.id.editText2);
+
+
 
                 update();
                 // Listener for events within the activity fragment
@@ -217,6 +221,16 @@ public class MainActivity extends Activity {
                           }
                         return false;
                     }
+                });
+
+                //cancel
+
+                cancelAct.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    fragMan.popBackStack();
+                    }
+
                 });
 
                 //save changes

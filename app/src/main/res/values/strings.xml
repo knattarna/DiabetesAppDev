@@ -10,5 +10,6 @@
     <string name="save_button">SAVE</string>
     <string name="return_to_day_window">Return to today</string>
     <string name="add_activity">+</string>
+    <string name="cancel_activity_window">CANCEL</string>
 
 </resources>

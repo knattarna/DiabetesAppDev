@@ -7,7 +7,7 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
     tools:context=".MainActivity$ActivityFragment"
-    android:background="@android:color/darker_gray"
+    android:background="@drawable/shade_background"
     >
 
     <TextView
@@ -40,6 +40,7 @@
         android:layout_marginTop="20sp"
         android:id="@+id/editText"
         android:hint="@string/description_activity_window"
+        android:gravity="start"
         android:imeOptions="actionNext"
         android:inputType="textAutoCorrect"
         android:maxLength="50"
@@ -63,12 +64,25 @@
     />
 
     <Button
-        android:layout_width="fill_parent"
+        android:layout_width="100sp"
         android:layout_height="wrap_content"
         android:text="@string/save_button"
         android:id="@+id/buttonSave"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
+        android:background="#ffffff"
+        android:gravity="center"
+        style="@style/save_button"
+        />
+
+    <Button
+        android:layout_width="100sp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:id="@+id/buttonCancel"
+        android:text="@string/cancel_activity_window"
+        android:gravity="center"
         android:background="#ffffff"
         style="@style/save_button"
         />
