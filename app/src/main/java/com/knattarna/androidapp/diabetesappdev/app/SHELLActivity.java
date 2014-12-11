@@ -27,7 +27,7 @@ public class SHELLActivity implements Comparable<SHELLActivity>
 //Few constructors
 
     public SHELLActivity() {
-        this.name = "Ny Aktivitet";
+        this.name = "New activity";
 
         if(time == null)
             time = Calendar.getInstance();

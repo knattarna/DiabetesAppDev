@@ -347,8 +347,9 @@ public class MainActivity extends Activity {
 
         private ListView act_list   = null;
         private Button ret_today    = null;
-        private Button day_name     = null;
+        private Button ret_week     = null;
         private Button add_act      = null;
+        private TextView day_name   = null;
 
         public DayFragment() {
             super();
@@ -360,7 +361,9 @@ public class MainActivity extends Activity {
 
             update();
 
-            day_name.setOnClickListener(new View.OnClickListener() {
+
+
+            ret_week.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     WeekFragment week = new WeekFragment();// Create new fragment and transaction
@@ -401,7 +404,8 @@ public class MainActivity extends Activity {
         public void update()
         {
             act_list    = (ListView) getActivity().findViewById(R.id.actList);
-            day_name    = (Button) getActivity().findViewById(R.id.dayName);
+            day_name    = (TextView) getActivity().findViewById(R.id.dayName);
+            ret_week    = (Button) getActivity().findViewById(R.id.buttonWeek);
             ret_today   = (Button) getActivity().findViewById(R.id.returnToday);
             add_act     = (Button) getActivity().findViewById(R.id.addAct);
 
