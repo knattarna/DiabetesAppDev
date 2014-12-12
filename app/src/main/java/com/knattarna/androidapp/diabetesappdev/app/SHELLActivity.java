@@ -163,10 +163,10 @@ public class SHELLActivity implements Comparable<SHELLActivity>
         isDone();
     }
 
-    public void setTime(Calendar offset)
+    public void offsetTime(int offset_h, int offset_m)
     {
-        int hour = getHour()+offset.get(Calendar.HOUR_OF_DAY);
-        int min = getMin()+offset.get(Calendar.MINUTE);
+        int hour = getHour()+offset_h;
+        int min = getMin()+offset_m;
         this.setTime(hour,min);
     }
 

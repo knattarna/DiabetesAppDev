@@ -97,10 +97,10 @@ public class Day
     }
 
     //updates every activity after this position with values dependent on this positions
-    public void updateDay(int position, Calendar offset)
+    public void updateDay(int position, int offset_h, int offset_m)
     {
         for(++position;position < dayActs.size();++position) {
-            dayActs.get(position).setTime(offset);
+            dayActs.get(position).offsetTime(offset_h,offset_m);
 
             System.out.println(dayActs.get(position).getTime().get(Calendar.DAY_OF_YEAR));
             System.out.println(date.get(Calendar.DAY_OF_YEAR));

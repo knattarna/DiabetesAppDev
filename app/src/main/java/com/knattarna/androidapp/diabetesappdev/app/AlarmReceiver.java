@@ -42,7 +42,7 @@ public class AlarmReceiver extends BroadcastReceiver {
         Notification notification = new Notification.Builder(k1)
                                     .setContentTitle((title))
                                     .setContentText(info)
-                                    .setSmallIcon(R.drawable.icon)
+                                    .setSmallIcon(R.drawable.logo_launcher)
                                     .setContentIntent(pIntent)
                                     .build();
 

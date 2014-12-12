@@ -245,11 +245,10 @@ public class MainActivity extends Activity {
 
                         //get the time offset for changed time
                         Calendar offset = Calendar.getInstance();
+                        int offset_hour = (temp_act.getHour() - CURRENT_ACT.getTime().get(Calendar.HOUR_OF_DAY));
+                        int offset_min  = (temp_act.getMin() - CURRENT_ACT.getTime().get(Calendar.MINUTE));
 
-                        offset.set(Calendar.HOUR_OF_DAY,(temp_act.getHour() - CURRENT_ACT.getTime().get(Calendar.HOUR_OF_DAY)));
-                        offset.set(Calendar.MINUTE, (temp_act.getMin() - CURRENT_ACT.getTime().get(Calendar.MINUTE)));
                         //first set the values changed within ACTIVITY WINDOW
-
 
                         CURRENT_ACT.setName(temp_act.getName());
                         CURRENT_ACT.setInfo(temp_act.getInfo());
@@ -263,7 +262,6 @@ public class MainActivity extends Activity {
                         //e.g clicked the add new activity button
                         if (!CURRENT_DAY.getDayActs().contains(CURRENT_ACT))
                         {
-                            System.out.println("happens");
                             SHELLActivity tmp = new SHELLActivity(
                                     getActivity(),
                                     CURRENT_ACT.getName(),
@@ -283,8 +281,7 @@ public class MainActivity extends Activity {
 
                         //only update if act is not done and time has changed value
                         if( !temp_act.getDone() && !changed) {
-                            System.out.println("shit happens");
-                            CURRENT_DAY.updateDay(CURRENT_DAY.getDayActs().indexOf(CURRENT_ACT), offset);
+                            CURRENT_DAY.updateDay(CURRENT_DAY.getDayActs().indexOf(CURRENT_ACT), offset_hour, offset_min);
                         }
 
                         //sort the activities
@@ -355,13 +352,14 @@ public class MainActivity extends Activity {
                 {
                     temp_act.setTime(hourOfDay, minute);
                 }
-                else if(CURRENT_ACT.getTime().getTimeInMillis() < cal.getTimeInMillis())
+                //cannot change to a time that has passed
+                else if(System.currentTimeMillis() < cal.getTimeInMillis())
                 {
                     temp_act.setTime(hourOfDay, minute);
                 }
 
-                ActivityFragment.this.displayToast();
                 ActivityFragment.this.update();
+                ActivityFragment.this.displayToast();
             }
 
         }
