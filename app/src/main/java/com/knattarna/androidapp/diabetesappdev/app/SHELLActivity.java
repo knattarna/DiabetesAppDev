@@ -1,5 +1,6 @@
 package com.knattarna.androidapp.diabetesappdev.app;
 
+import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.Context;
@@ -20,38 +21,37 @@ public class SHELLActivity implements Comparable<SHELLActivity>
     private String name         = null;
     private Calendar time       = null;
     private String info         = null;
+    private Context ctex        = null;
+
+    //used to uniquely identify a PendingIntent
+    private int uniqueID        = 0;
 
     //every activity holds a unique Intent that controls alarm on/off and reschedules etc
     private PendingIntent alarmIntent = null;
 
-//Few constructors
+    //An activity is dependent on which day that holds it therefore should always be
+    //constructed with a calendar instantiated within that day .. preferably
+    public SHELLActivity(Context ctx,Calendar cal) {
 
-    public SHELLActivity() {
-        this.name = "New activity";
+        this.ctex = ctx;
 
-        if(time == null)
-            time = Calendar.getInstance();
+        this.name = "Ny Aktivitet";
+        time = cal;
 
-        Calendar tmpCal = Calendar.getInstance();
-
-      /* TODO There's a bug in here somewhere
-        this.time.set(Calendar.HOUR_OF_DAY,tmpCal.get(Calendar.HOUR_OF_DAY));
-        this.time.set(Calendar.MINUTE,tmpCal.get(Calendar.MINUTE));
-        */
-
-        this.time.set(Calendar.HOUR_OF_DAY,23);
-        this.time.set(Calendar.MINUTE,59);
         this.info = "";
         BloodSLevel = 0;
 
         isDone();
+        generateUniqueID();
+        //setAlarm();
     }
 
-    public SHELLActivity(String name, int hour, int min, int day) {
+    public SHELLActivity(Context ctx, String name, int hour, int min, int day) {
+
+        this.ctex = ctx;
         this.name = name;
 
-        if(time == null)
-            time = Calendar.getInstance();
+        time = Calendar.getInstance();
 
         this.time.set(Calendar.HOUR_OF_DAY,hour);
         this.time.set(Calendar.MINUTE,min);
@@ -61,23 +61,48 @@ public class SHELLActivity implements Comparable<SHELLActivity>
         BloodSLevel = 0;
 
         isDone();
+        generateUniqueID();
+        setAlarm();
     }
 
-    public SHELLActivity(String name, int hour, int min, String info, double bloodSLevel, int day, boolean done) {
+    //constructor used for instantiating objects from database
+    public SHELLActivity(Context ctx, String name, String info, int hour, int min, int day, int uniqueID) {
+
+        this.ctex = ctx;
         this.name = name;
 
-        if(time == null)
-            time = Calendar.getInstance();
+        time = Calendar.getInstance();
 
-        this.time.set(Calendar.HOUR_OF_DAY,hour);
-        this.time.set(Calendar.MINUTE,min);
-        this.time.set(Calendar.DAY_OF_YEAR,day);
+        setTime(hour,min);
+        setDate(day);
 
-        this.info = info;
-        BloodSLevel = bloodSLevel;
+        setInfo(info);
+        setUniqueID(uniqueID);
+
+        BloodSLevel = 0;
+
         isDone();
+        //setAlarm();
     }
 
+    public SHELLActivity(Context ctx, String name, String info, int hour, int min, int day,  int uniqueID, double bloodSLevel) {
+
+        this.ctex = ctx;
+        this.name = name;
+
+        time = Calendar.getInstance();
+
+        setTime(hour,min);
+        setDate(day);
+
+        setInfo(info);
+        setUniqueID(uniqueID);
+
+        setBloodSLevel(bloodSLevel);
+
+        isDone();
+        //setAlarm();
+    }
 
     //get functions
     public String getName()
@@ -94,21 +119,26 @@ public class SHELLActivity implements Comparable<SHELLActivity>
         return this.time.get(Calendar.MINUTE);
     }
 
-    public Calendar getTime() {return this.time;}
+    public Calendar getTime()
+    {
+        return this.time;
+    }
 
     public String getInfo() {
         return info;
     }
 
-    public double getBloodSLevel() {return  BloodSLevel;}
+    public double getBloodSLevel() {
+        return  BloodSLevel;
+    }
 
     public boolean getDone() {
         return done;
     }
 
-    public int getDay() { return this.time.get(Calendar.DAY_OF_YEAR); }
-
-    public PendingIntent getAlarmIntent() { return alarmIntent; }
+    public PendingIntent getAlarmIntent() {
+        return alarmIntent;
+    }
 
     //set functions
     public void setBloodSLevel(double bloodSLevel) {
@@ -124,17 +154,12 @@ public class SHELLActivity implements Comparable<SHELLActivity>
 
     public void setTime(int hour, int min)
     {
-        //cannot change time on passed events or change to passed event
-        Calendar tmp = Calendar.getInstance();
-        tmp.set(Calendar.HOUR_OF_DAY,hour);
-        tmp.set(Calendar.MINUTE,min);
-
-        if (getDone() || tmp.getTimeInMillis() < System.currentTimeMillis() )
-            return;
-
         this.time.set(Calendar.HOUR_OF_DAY, hour);
         this.time.set(Calendar.MINUTE,min);
 
+        //reset the alarm when time changes
+        //setAlarm();
+        //check whether act is done
         isDone();
     }
 
@@ -153,20 +178,66 @@ public class SHELLActivity implements Comparable<SHELLActivity>
             this.done = this.time.getTimeInMillis() < tmpCal.getTimeInMillis();
         else
             this.done = this.time.get(Calendar.DAY_OF_YEAR) < tmpCal.get(Calendar.DAY_OF_YEAR);
-
     }
 
+    public void setDate(int dayOfYear)
+    {
+        this.time.set(Calendar.DAY_OF_YEAR,dayOfYear);
+    }
+
+    public int getDate() { return this.time.get(Calendar.DAY_OF_YEAR); }
+
+    //functions for generating unique alarms
+    public int getUniqueID()
+    {
+        return this.uniqueID;
+    }
+
+    public void setUniqueID(int uniqueID)
+    {
+        this.uniqueID = uniqueID;
+    }
+
+    private void generateUniqueID()
+    {
+        //didn't put to much effort on this.. hopefully its ok..
+        this.uniqueID =  (int) (long) this.time.getTimeInMillis()/(getDate()+getMin()+getHour());
+    }
 
     //sets the Intent to broadcast to the alarm receiver.. or something
     public void setAlarmIntent(Context context, Intent intent)
     {
-        this.alarmIntent = PendingIntent.getBroadcast(context,
-                                            (getHour()+getMin()+this.time.DAY_OF_MONTH),
-                                            intent,0);
+        //need to uniquely identify the activity, using data that doesn't change..
+        //this does not do that properly, but it's a start
+        this.alarmIntent = PendingIntent.getBroadcast(context,getUniqueID(),intent,0);
     }
 
+    public void setAlarm()
+    {
+        if(getDone())
+            return;
+
+        AlarmManager ALARM = (AlarmManager) ctex.getSystemService(Context.ALARM_SERVICE);
+
+        Intent intent = new Intent(ctex, AlarmReceiver.class);
+
+        intent.putExtra("Title", getName());
+        intent.putExtra("Info", getInfo());
+
+        setAlarmIntent(ctex, intent);
+        ALARM.set(AlarmManager.RTC_WAKEUP, getTime().getTimeInMillis(),
+                getAlarmIntent());
+    }
+
+
+    //Activities can be sorted
     @Override
     public int compareTo(SHELLActivity another) {
-        return (int) ((this.getTime().getTimeInMillis()) - (another.getTime().getTimeInMillis()));
+        if(this.getDate() == another.getDate())
+            return (int) ((this.getTime().getTimeInMillis()) - (another.getTime().getTimeInMillis()));
+        else
+            return this.getDate() - another.getDate();
     }
+
+
 }

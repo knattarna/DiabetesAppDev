@@ -41,7 +41,7 @@
         android:id="@+id/editText"
         android:hint="@string/description_activity_window"
         android:gravity="start"
-        android:imeOptions="actionNext"
+        android:imeOptions="actionDone"
         android:inputType="textAutoCorrect"
         android:maxLength="50"
         android:autoText="false"

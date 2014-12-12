@@ -26,23 +26,21 @@ public class AlarmReceiver extends BroadcastReceiver {
         Intent intent = new Intent(k1,MainActivity.class);
         PendingIntent pIntent = PendingIntent.getActivity(k1,1,intent,0);
 
-        String title = "Shitty App";
-        String info  = "Shitty app wants your attention!";
-        Calendar cal = Calendar.getInstance();
+        String title = "App";
+        String info  = "App wants your attention!";
 
         Bundle extras = k2.getExtras();
         if(extras != null)
         {
             title = extras.getString("Title");
             info  = extras.getString("Info");
-            cal   = (Calendar) extras.get("Time");
         }
 
         NotificationManager notificationManager =
                 (NotificationManager) k1.getSystemService(Context.NOTIFICATION_SERVICE);
 
         Notification notification = new Notification.Builder(k1)
-                                    .setContentTitle((title+" "+cal.get(Calendar.HOUR_OF_DAY)+":"+cal.get(Calendar.MINUTE)))
+                                    .setContentTitle((title))
                                     .setContentText(info)
                                     .setSmallIcon(R.drawable.icon)
                                     .setContentIntent(pIntent)
@@ -54,7 +52,7 @@ public class AlarmReceiver extends BroadcastReceiver {
 
         Vibrator vibrator = (Vibrator)  k1
                 .getSystemService(Context.VIBRATOR_SERVICE);
-        vibrator.vibrate(2000);
+        vibrator.vibrate(1000);
 
         notificationManager.notify(0,notification);
     }

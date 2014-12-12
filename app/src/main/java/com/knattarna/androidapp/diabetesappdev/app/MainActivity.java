@@ -37,6 +37,7 @@ import android.widget.CheckBox;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 
 import android.content.Intent;
 import android.content.Context;
@@ -46,15 +47,16 @@ public class MainActivity extends Activity {
     private static FragmentManager fragMan = null;
 
     //this should later be the week object global to the scope
-    private static Week CURRENT_WEEK    = new Week();
-    private static Day CURRENT_DAY      = null;
-    private static SHELLActivity CURRENT_ACT = null;
+    private static Week CURRENT_WEEK            = null;
+    private static Day CURRENT_DAY              = null;
+    private static SHELLActivity CURRENT_ACT    = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        this.CURRENT_WEEK = new Week(this);
 
         this.fragMan = getFragmentManager();
         this.CURRENT_DAY = this.CURRENT_WEEK.today();
@@ -131,24 +133,23 @@ public class MainActivity extends Activity {
         //static final int TIME_DIALOG_ID = 0;
 
 
-        public ActivityFragment() {
-
-                //making a copy
-            this.temp_act = new SHELLActivity(
-                    CURRENT_ACT.getName(),
-                    CURRENT_ACT.getHour(),
-                    CURRENT_ACT.getMin(),
-                    CURRENT_ACT.getInfo(),
-                    CURRENT_ACT.getBloodSLevel(),
-                    CURRENT_ACT.getDay(),
-                    false);
-
-        }
+        public ActivityFragment() {}
 
         @Override
         public void onActivityCreated(Bundle savedInstanceState) {
             if (savedInstanceState == null) {
                 super.onActivityCreated(savedInstanceState);
+
+                //making a copy
+                this.temp_act = new SHELLActivity(
+                        getActivity(),
+                        CURRENT_ACT.getName(),
+                        CURRENT_ACT.getInfo(),
+                        CURRENT_ACT.getHour(),
+                        CURRENT_ACT.getMin(),
+                        CURRENT_ACT.getDate(),
+                        CURRENT_ACT.getUniqueID(),
+                        CURRENT_ACT.getBloodSLevel());
 
                 saveAct     = (Button)   getActivity().findViewById(R.id.buttonSave);
                 cancelAct   = (Button)   getActivity().findViewById(R.id.buttonCancel);
@@ -163,9 +164,10 @@ public class MainActivity extends Activity {
                 // Listener for events within the activity fragment
                 name.setOnClickListener(new View.OnClickListener() {
 
-                    final EditText edtext = (EditText) getActivity().getLayoutInflater().inflate(R.layout.edit_text_dialog,null);
+
 
                     public void onClick(View v) {
+                        final EditText edtext = (EditText) getActivity().getLayoutInflater().inflate(R.layout.edit_text_dialog,null);
                         new AlertDialog.Builder(getActivity())
                                 .setTitle("Rename")
                                 .setView(edtext)
@@ -200,7 +202,7 @@ public class MainActivity extends Activity {
                 description.setOnEditorActionListener(new TextView.OnEditorActionListener() {
                     @Override
                     public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                        if (actionId == EditorInfo.IME_ACTION_NEXT) {
+                        if (actionId == EditorInfo.IME_ACTION_DONE) {
                             temp_act.setInfo(description.getText().toString());
                         }
                         return false;
@@ -238,36 +240,56 @@ public class MainActivity extends Activity {
                     @Override
                     public void onClick(View v) {
 
-                        //add activity
-                        if (!CURRENT_DAY.getDayActs().contains(CURRENT_ACT))
-                            CURRENT_DAY.addActivity(CURRENT_ACT);
-
                         //have we changed the time of the object ?
-                        Boolean test = (CURRENT_ACT.getHour() == temp_act.getHour()) && (CURRENT_ACT.getMin() == temp_act.getMin());
+                        Boolean changed = (CURRENT_ACT.getHour() == temp_act.getHour()) && (CURRENT_ACT.getMin() == temp_act.getMin());
 
                         //get the time offset for changed time
                         Calendar offset = Calendar.getInstance();
 
                         offset.set(Calendar.HOUR_OF_DAY,(temp_act.getHour() - CURRENT_ACT.getTime().get(Calendar.HOUR_OF_DAY)));
                         offset.set(Calendar.MINUTE, (temp_act.getMin() - CURRENT_ACT.getTime().get(Calendar.MINUTE)));
+                        //first set the values changed within ACTIVITY WINDOW
 
-                        //java is weird cannot do CURRENT_ACT = temp_act
 
-                        CURRENT_ACT.setInfo(temp_act.getInfo());
                         CURRENT_ACT.setName(temp_act.getName());
-                        CURRENT_ACT.setTime(temp_act.getHour(), temp_act.getMin());
+                        CURRENT_ACT.setInfo(temp_act.getInfo());
+                        CURRENT_ACT.setTime(temp_act.getHour(),temp_act.getMin());
+                        CURRENT_ACT.setDate(temp_act.getDate());
+                        CURRENT_ACT.setUniqueID(temp_act.getUniqueID());
                         CURRENT_ACT.setBloodSLevel(temp_act.getBloodSLevel());
 
+                        CURRENT_ACT.setAlarm();
+                        //add activity if the current activity isn't a part of the day
+                        //e.g clicked the add new activity button
+                        if (!CURRENT_DAY.getDayActs().contains(CURRENT_ACT))
+                        {
+                            System.out.println("happens");
+                            SHELLActivity tmp = new SHELLActivity(
+                                    getActivity(),
+                                    CURRENT_ACT.getName(),
+                                    CURRENT_ACT.getInfo(),
+                                    CURRENT_ACT.getHour(),
+                                    CURRENT_ACT.getMin(),
+                                    CURRENT_ACT.getDate(),
+                                    CURRENT_ACT.getUniqueID(),
+                                    CURRENT_ACT.getBloodSLevel());
 
+                            CURRENT_DAY.addActivity(tmp);
+
+                            CURRENT_DAY.sortActs();
+                            fragMan.popBackStack();
+                            return;
+                        }
 
                         //only update if act is not done and time has changed value
-                        if( !temp_act.getDone() && !test) {
+                        if( !temp_act.getDone() && !changed) {
+                            System.out.println("shit happens");
                             CURRENT_DAY.updateDay(CURRENT_DAY.getDayActs().indexOf(CURRENT_ACT), offset);
                         }
-                        //reset all alarms of today
-                        //OMG i found the answer
-                        //if time has changed on a completed activity sort the day
+
+                        //sort the activities
                         CURRENT_DAY.sortActs();
+                        //return to DAY WINDOW
                         fragMan.popBackStack();
                     }
                 });
@@ -324,9 +346,22 @@ public class MainActivity extends Activity {
             @Override
             public void onTimeSet(TimePicker view, int hourOfDay,int minute)
             {
-                temp_act.setTime(hourOfDay,minute);
-                ActivityFragment.this.update();
+                Calendar cal = Calendar.getInstance();
+                cal.set(Calendar.HOUR_OF_DAY,hourOfDay);
+                cal.set(Calendar.MINUTE,minute);
+
+                //if we edit in a day in the future anything goes
+                if (cal.get(Calendar.DAY_OF_YEAR) < CURRENT_ACT.getDate())
+                {
+                    temp_act.setTime(hourOfDay, minute);
+                }
+                else if(CURRENT_ACT.getTime().getTimeInMillis() < cal.getTimeInMillis())
+                {
+                    temp_act.setTime(hourOfDay, minute);
+                }
+
                 ActivityFragment.this.displayToast();
+                ActivityFragment.this.update();
             }
 
         }
@@ -389,7 +424,7 @@ public class MainActivity extends Activity {
                 @Override
                 public void onClick(View v) {
 
-                    CURRENT_ACT = new SHELLActivity();
+                    CURRENT_ACT = new SHELLActivity(getActivity(),CURRENT_DAY.getDate());
                     update();
 
                     ActivityFragment act = new ActivityFragment();
@@ -425,7 +460,6 @@ public class MainActivity extends Activity {
                     activity_names));
 
             day_name.setText(CURRENT_DAY.getDayOfTheWeek());
-            setAlarms();
 
         }
 
@@ -436,29 +470,6 @@ public class MainActivity extends Activity {
             return rootview;
         }
 
-        private void setAlarms()
-        {
-            for(int i = 0; i < CURRENT_DAY.getDayActs().size(); ++i) {
-
-                SHELLActivity temp_act = CURRENT_DAY.getDayActs().get(i);
-
-                if(temp_act.getDone())
-                    continue;
-
-                ALARM = (AlarmManager) getActivity().getSystemService(Context.ALARM_SERVICE);
-
-                Intent alarmIntent = new Intent(getActivity(), AlarmReceiver.class);
-
-                alarmIntent.putExtra("Title", temp_act.getName());
-                alarmIntent.putExtra("Info", temp_act.getInfo());
-                alarmIntent.putExtra("Time", temp_act.getTime());
-
-                temp_act.setAlarmIntent(getActivity(), alarmIntent);
-
-                ALARM.set(AlarmManager.RTC_WAKEUP, temp_act.getTime().getTimeInMillis(),
-                        temp_act.getAlarmIntent());
-            }
-        }
     }
 
     //View editing within the rows of the DayFragment class is done via the ArrayAdapter getView method
@@ -594,7 +605,7 @@ public class MainActivity extends Activity {
             TextView date = (TextView) row.findViewById(R.id.day_date);
 
             text.setText(CURRENT_WEEK.getDays().get(position).getDayOfTheWeek());
-            date.setText(CURRENT_WEEK.getDays().get(position).getDate());
+            date.setText(CURRENT_WEEK.getDays().get(position).getDate().getDisplayName(Calendar.DATE,Calendar.LONG, Locale.US));
 
             text.setOnClickListener(new View.OnClickListener() {
                 @Override

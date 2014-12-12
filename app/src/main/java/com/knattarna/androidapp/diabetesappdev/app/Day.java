@@ -1,6 +1,8 @@
 package com.knattarna.androidapp.diabetesappdev.app;
 
 
+import android.content.Context;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -13,59 +15,60 @@ import java.util.Locale;
  */
 public class Day
 {
+    private ArrayList<SHELLActivity> dayActs = null;
 
-
-    private ArrayList<SHELLActivity> dayActs;
-
-    private String date;
-    private String dayOfTheWeek;
-    private Calendar day = null;
+    private Calendar date = null;
+    private Context ctex = null;
 
     private final ArrayList<String> ACTIVITIES = new ArrayList<String>() {
+        {
+            add("Breakfast");
+            add("Snack");
+            add("Lunch");
+            add("Snack");
+            add("Dinner");
+            add("Snack");
+        }};
+
+    public Day(Context ctex)
     {
-        add("Breakfast");
-        add("Snack");
-        add("Lunch");
-        add("Snack");
-        add("Dinner");
-        add("Snack");
+        this.ctex = ctex;
+        date = Calendar.getInstance();
 
-    }};
-
-    public Day() {
-
-        if(day == null)
-            day = Calendar.getInstance();
-
-        date = day.getDisplayName(Calendar.DAY_OF_MONTH, Calendar.SHORT, Locale.US);
-        dayOfTheWeek = day.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, Locale.US);
-        //fill day with standard activities
-        fillDay();
+        dayActs= new ArrayList<SHELLActivity>();
+        //fillDay();
     }
 
     //create days from a set calendar
-    public Day(Calendar cal)
+    public Day(Context ctex, Calendar cal)
     {
+        this.ctex = ctex;
+        dayActs= new ArrayList<SHELLActivity>();
 
-        day = cal;
-        date = day.getDisplayName(Calendar.DAY_OF_MONTH, Calendar.SHORT, Locale.US);
-        dayOfTheWeek = day.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, Locale.US);
-
+        date = cal;
         //fill day with standard activities
         fillDay();
     }
 
-    public String getDate(){ return date;}
+    public Day(Context ctex, Calendar cal, ArrayList<SHELLActivity> acts)
+    {
+        this.ctex = ctex;
+        this.date = cal;
+        dayActs = acts;
+    }
 
-    public String getDayOfTheWeek(){return dayOfTheWeek;}
+    //returns string representation of the current weekday
+    public String getDayOfTheWeek()
+    {
+        return this.date.getDisplayName(Calendar.DAY_OF_WEEK,Calendar.LONG,Locale.US);
+    }
+
+    public Calendar getDate()
+    {
+        return this.date;
+    }
 
     public ArrayList<SHELLActivity> getDayActs(){return dayActs;}
-
-    public void setDate(String date){this.date = date;}
-
-    public void setDayOfTheWeek(String dayOfTheWeek) {
-        dayOfTheWeek = dayOfTheWeek;
-    }
 
     public void addActivity(SHELLActivity act)
     {
@@ -84,7 +87,7 @@ public class Day
                     if(htemp >= 24)
                         break;
 
-                    SHELLActivity temp = new SHELLActivity(ACTIVITIES.get(i), htemp, 0, day.get(Calendar.DAY_OF_YEAR));
+                    SHELLActivity temp = new SHELLActivity(ctex, ACTIVITIES.get(i), htemp, 0, date.get(Calendar.DAY_OF_YEAR));
                     add(temp);
                     htemp = htemp + 2;
                 }
@@ -98,8 +101,10 @@ public class Day
     {
         for(++position;position < dayActs.size();++position) {
             dayActs.get(position).setTime(offset);
-            //does not work
-            if(dayActs.get(position).getTime().get(Calendar.DAY_OF_YEAR) != day.get(Calendar.DAY_OF_YEAR))
+
+            System.out.println(dayActs.get(position).getTime().get(Calendar.DAY_OF_YEAR));
+            System.out.println(date.get(Calendar.DAY_OF_YEAR));
+            if(dayActs.get(position).getTime().get(Calendar.DAY_OF_YEAR) != date.get(Calendar.DAY_OF_YEAR))
             {
                 dayActs.remove(position);
             }
