@@ -50,7 +50,7 @@ public class DatabaseHelper extends SQLiteOpenHelper implements BaseColumns {
         ============================================================================
      */
     private Context context = null;
-    public static final int DATABASE_VERSION = 5;
+    public static final int DATABASE_VERSION = 6;
     public static final String DATABASE_NAME = "KnattarnasDatabasOnYourPhone.db";
 
 
@@ -128,7 +128,6 @@ public class DatabaseHelper extends SQLiteOpenHelper implements BaseColumns {
                         cursor.getInt(1)
                 );
                 activities.add(act);
-                System.out.println("reading from db " + cursor.getInt(5));
         /*
                 System.out.println("reading from db \n"
                         + act.getName() + '\n'
