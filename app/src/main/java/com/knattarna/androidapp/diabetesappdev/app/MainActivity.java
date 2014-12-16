@@ -60,6 +60,9 @@ public class MainActivity extends Activity {
 
         this.fragMan = getFragmentManager();
         this.CURRENT_DAY = this.CURRENT_WEEK.today();
+        //set alarms only for today and only once every time the apps is started
+        //because it's more manageable at the moment
+        this.CURRENT_DAY.setAlarms();
 
         //if there is no previously saved instance of the app
         //add a fragment to the layout
@@ -257,6 +260,8 @@ public class MainActivity extends Activity {
                         CURRENT_ACT.setUniqueID(temp_act.getUniqueID());
                         CURRENT_ACT.setBloodSLevel(temp_act.getBloodSLevel());
 
+
+                        // set/reset the alarm for the changed or added activity
                         CURRENT_ACT.setAlarm();
                         //add activity if the current activity isn't a part of the day
                         //e.g clicked the add new activity button

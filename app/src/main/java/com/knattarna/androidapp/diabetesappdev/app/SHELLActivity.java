@@ -62,7 +62,7 @@ public class SHELLActivity implements Comparable<SHELLActivity>
 
         isDone();
         generateUniqueID();
-        setAlarm();
+        //setAlarm();
     }
 
     //constructor used for instantiating objects from database
@@ -201,7 +201,7 @@ public class SHELLActivity implements Comparable<SHELLActivity>
     private void generateUniqueID()
     {
         //didn't put to much effort on this.. hopefully its ok..
-        this.uniqueID =  (int) (long) this.time.getTimeInMillis()/(getDate()+getMin()+getHour());
+        this.uniqueID =  (int) (getDate()+getMin()+getHour());
     }
 
     //sets the Intent to broadcast to the alarm receiver.. or something

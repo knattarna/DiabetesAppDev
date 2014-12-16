@@ -23,8 +23,7 @@ public class AlarmReceiver extends BroadcastReceiver {
     public void onReceive(Context k1, Intent k2) {
         // TODO Auto-generated method stub
 
-        Intent intent = new Intent(k1,MainActivity.class);
-        PendingIntent pIntent = PendingIntent.getActivity(k1,1,intent,0);
+        PendingIntent pIntent = PendingIntent.getActivity(k1,1,k2,0);
 
         String title = "App";
         String info  = "App wants your attention!";

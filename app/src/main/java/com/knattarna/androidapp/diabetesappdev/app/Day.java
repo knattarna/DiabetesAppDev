@@ -23,11 +23,12 @@ public class Day
     private final ArrayList<String> ACTIVITIES = new ArrayList<String>() {
         {
             add("Breakfast");
-            add("Snack");
-            add("Lunch");
-            add("Snack");
+            add("Second Breakfast");
+            add("Elevenses");
+            add("Luncheon");
+            add("Afternoon Tea");
             add("Dinner");
-            add("Snack");
+            add("Supper");
         }};
 
     public Day(Context ctex)
@@ -81,7 +82,7 @@ public class Day
         //initialize the standard day of activities
         dayActs = new ArrayList<SHELLActivity>() {
             {
-                int htemp = 8;
+                int htemp = 7;
 
                 for(int i = 0; i < ACTIVITIES.size(); ++i){
                     if(htemp >= 24)
@@ -100,7 +101,11 @@ public class Day
     public void updateDay(int position, int offset_h, int offset_m)
     {
         for(++position;position < dayActs.size();++position) {
+
+            //move the activity forward
             dayActs.get(position).offsetTime(offset_h,offset_m);
+            //reset the alarm
+            dayActs.get(position).setAlarm();
 
             System.out.println(dayActs.get(position).getTime().get(Calendar.DAY_OF_YEAR));
             System.out.println(date.get(Calendar.DAY_OF_YEAR));
@@ -115,6 +120,14 @@ public class Day
     public void sortActs()
     {
         Collections.sort(dayActs);
+    }
+
+    public void setAlarms()
+    {
+        for (int i = 0; i < dayActs.size(); ++i)
+        {
+            dayActs.get(i).setAlarm();
+        }
     }
 
 }
