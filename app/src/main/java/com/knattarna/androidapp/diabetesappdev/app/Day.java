@@ -107,8 +107,6 @@ public class Day
             //reset the alarm
             dayActs.get(position).setAlarm();
 
-            System.out.println(dayActs.get(position).getTime().get(Calendar.DAY_OF_YEAR));
-            System.out.println(date.get(Calendar.DAY_OF_YEAR));
             if(dayActs.get(position).getTime().get(Calendar.DAY_OF_YEAR) != date.get(Calendar.DAY_OF_YEAR))
             {
                 dayActs.remove(position);

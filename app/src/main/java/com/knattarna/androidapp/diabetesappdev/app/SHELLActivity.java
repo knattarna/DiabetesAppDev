@@ -85,6 +85,27 @@ public class SHELLActivity implements Comparable<SHELLActivity>
         //setAlarm();
     }
 
+    //constructor used for instantiating objects from database
+    public SHELLActivity(Context ctx, String name, String info, int done, long timeInMili, int uniqueID) {
+
+        this.ctex = ctx;
+        this.name = name;
+
+        this.time = Calendar.getInstance();
+        this.time.setTimeInMillis(timeInMili);
+
+        setInfo(info);
+        setUniqueID(uniqueID);
+
+        BloodSLevel = 0;
+
+        this.done = done == 1;
+
+        //setAlarm();
+    }
+
+
+
     public SHELLActivity(Context ctx, String name, String info, int hour, int min, int day,  int uniqueID, double bloodSLevel) {
 
         this.ctex = ctx;

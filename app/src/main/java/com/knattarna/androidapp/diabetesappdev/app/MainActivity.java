@@ -58,8 +58,13 @@ public class MainActivity extends Activity {
 
         this.CURRENT_WEEK = new Week(this);
 
+        //read today from database
+        this.CURRENT_WEEK.getDayFromDatabase();
+
+
         this.fragMan = getFragmentManager();
         this.CURRENT_DAY = this.CURRENT_WEEK.today();
+
         //set alarms only for today and only once every time the apps is started
         //because it's more manageable at the moment
         this.CURRENT_DAY.setAlarms();
@@ -101,6 +106,12 @@ public class MainActivity extends Activity {
         super.onBackPressed();
     }
 
+    @Override
+    public void onStop()
+    {
+        CURRENT_WEEK.writeDayToDatabase();
+        super.onStop();
+    }
 
     /**
      * Helper functions
