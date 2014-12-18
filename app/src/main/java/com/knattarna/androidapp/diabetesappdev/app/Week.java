@@ -41,6 +41,8 @@ public class Week
 
     public Day today()
     {
+        //Calendar now = Calendar.getInstance();
+
         if( ! DAYS.isEmpty() )
             return DAYS.get(0);
         else
@@ -51,27 +53,49 @@ public class Week
         }
     }
 
-    public void writeDayToDatabase()
+    /*
+        DATABASE FUNCTIONS
+     */
+    public void writeDaysToDatabase()
     {
         this.db.clearTable();
         //just test to write a day to database
-        for(int i = 0; i < today().getDayActs().size(); ++i) {
-            this.db.writeActivity(today().getDayActs().get(i));
+        for(int i = 0; i < getDays().size(); ++i) {
+            this.db.writeDay(getDays().get(i));
         }
+    }
+
+
+
+    public void writeTodayToDatabase()
+    {
+        this.db.clearTable();
+        //just test to write a day to database
+            this.db.writeDay(today());
     }
 
     public void getDayFromDatabase()
     {
         ArrayList<SHELLActivity> shells = this.db.getAllActivities();
 
-        if(shells.isEmpty())
+        if(shells.isEmpty()) {
+            System.out.println("happens");
             return;
+        }
 
         Calendar cal = Calendar.getInstance();
         cal.setTimeInMillis(shells.get(0).getTime().getTimeInMillis());
 
+        if(cal.get(Calendar.DAY_OF_YEAR) != Calendar.getInstance().get(Calendar.DAY_OF_YEAR))
+            return;
+
         if( !DAYS.isEmpty() ) {
             DAYS.set(0,new Day(context, cal, shells));
         }
+    }
+
+    public void getAllDaysFromDatabase()
+    {
+
     }
 }

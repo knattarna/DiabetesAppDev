@@ -22,7 +22,7 @@ public class DatabaseHelper extends SQLiteOpenHelper implements BaseColumns {
     public static final String COLUMN_NAME_TITLE        = "name";               //2
     public static final String COLUMN_NAME_INFO         = "info";               //3
     public static final String COLUMN_NAME_DONE         = "actionDone";         //4
-    public static final String COLUMN_NAME_TIME         = "datetime";           //5
+    public static final String COLUMN_NAME_TIME         = "date";           //5
 
     private static final String TEXT_TYPE   = " TEXT";
     private static final String INT_TYPE    = " INTEGER";
@@ -50,7 +50,7 @@ public class DatabaseHelper extends SQLiteOpenHelper implements BaseColumns {
         ============================================================================
      */
     private Context context = null;
-    public static final int DATABASE_VERSION = 6;
+    public static final int DATABASE_VERSION = 12;
     public static final String DATABASE_NAME = "KnattarnasDatabasOnYourPhone.db";
 
 
@@ -92,18 +92,18 @@ public class DatabaseHelper extends SQLiteOpenHelper implements BaseColumns {
         contentValues.put(COLUMN_NAME_DONE,act.getDone()?1:0);
         contentValues.put(COLUMN_NAME_TIME,act.getTime().getTimeInMillis());
 
-       /* System.out.println("writing to db \n"
-                + act.getName() + '\n'
-                + act.getInfo() + '\n'
-                + act.getHour() + " : "
-                + act.getMin() + '\n'
-                + act.getDate() + '\n'
-                + act.getUniqueID() + '\n'
-                + "=====================");
-        */
         db.insert(TABLE_NAME, null, contentValues);
         db.close();
     }
+
+    public void writeDay(Day day)
+    {
+        for (int i = 0; i < day.getDayActs().size(); ++i)
+        {
+            writeActivity(day.getDayActs().get(i));
+        }
+    }
+
 
 
     //all fetch and write operations on the database
@@ -128,16 +128,35 @@ public class DatabaseHelper extends SQLiteOpenHelper implements BaseColumns {
                         cursor.getInt(1)
                 );
                 activities.add(act);
-        /*
-                System.out.println("reading from db \n"
-                        + act.getName() + '\n'
-                        + act.getInfo() + '\n'
-                        + act.getHour() + " : "
-                        + act.getMin() + '\n'
-                        + act.getDate() + '\n'
-                        + act.getUniqueID() + '\n'
-                        + "=====================");
-          */
+
+            } while (cursor.moveToNext());
+        }
+
+        return activities;
+    }
+
+    public ArrayList<SHELLActivity> getADay()
+    {
+        ArrayList<SHELLActivity> activities = new ArrayList<SHELLActivity>();
+        String selectQuery = "SELECT * FROM " + TABLE_NAME +
+                                " WHERE " + COLUMN_NAME_TIME + " >= datetime('now')";
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                SHELLActivity act = new SHELLActivity(
+                        context,
+                        cursor.getString(2),
+                        cursor.getString(3),
+                        cursor.getInt(4),
+                        cursor.getLong(5),
+                        cursor.getInt(1)
+                );
+                activities.add(act);
+
             } while (cursor.moveToNext());
         }
 

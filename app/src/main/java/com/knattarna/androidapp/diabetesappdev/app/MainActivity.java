@@ -109,7 +109,7 @@ public class MainActivity extends Activity {
     @Override
     public void onStop()
     {
-        CURRENT_WEEK.writeDayToDatabase();
+        CURRENT_WEEK.writeTodayToDatabase();
         super.onStop();
     }
 
